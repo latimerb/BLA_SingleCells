@@ -1,0 +1,20 @@
+load_file("class_axoaxoniccell.hoc")
+
+objref Chn, ccl
+
+Chn = new axoaxoniccell()
+
+/*
+access Chn.soma[0]
+
+ccl = new IClamp(0.5)
+ccl.del = 200
+ccl.dur = 1000
+ccl.amp = 1
+*/
+
+tstop = 1400
+
+init()
+
+run()
