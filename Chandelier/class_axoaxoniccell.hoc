@@ -2303,43 +2303,43 @@ proc mechinit() {
 
 proc insert_mechs() {
 
-	forsec all {
+  forsec all {
     Ra = 195.97
     insert pas
-      g_pas = 0.000437
-      e_pas = -70
-	  cm = 1.0
+    g_pas = 0.000437
+    e_pas = -70
+    cm = 1.0
   }
   forsec somatic {
 	  /*
     insert Im
-      gbar_Im = 0.082637
+      gbar_Im = 2.48e-2
     insert Ih
-      gbar_Ih = 4.95
+      gbar_Ih = 4.99e-3
     insert NaTs
-      gbar_NaTs = 0.00135
+      gbar_NaTs = 3.677e-1
     insert Nap
-      gbar_Nap = 0.910976
+      gbar_Nap = 3.005e-2
     insert K_P
-      gbar_K_P = 2.6915
+      gbar_K_P = 9.332e-1
     insert K_T
-      gbar_K_T = 0.6397
+      gbar_K_T = 3.079e-1
     insert SK
-      gbar_SK = 0.0677
+      gbar_SK = 3.0119e-1
     insert Kv3_1
-      gbar_Kv3_1 = 0.09138
+      gbar_Kv3_1 = 2.345
     insert Ca_HVA
-      gbar_Ca_HVA = 0.00069
+      gbar_Ca_HVA = 3.197e-4
     insert Ca_LVA
-      gbar_Ca_LVA = 0.0029558
+      gbar_Ca_LVA = 3.847e-5
     insert CaDynamics
-      gamma_CaDynamics = 0.00427
-      decay_CaDynamics = 733
+      gamma_CaDynamics = 1.29e-2
+      decay_CaDynamics = 2.02e1
       depth_CaDynamics = 0.1
       minCai_CaDynamics = 0.0001
 	  */
     insert pas
-      g_pas = 0.000437
+      g_pas = 3.815e-4
       e_pas = -70
   }
 	
