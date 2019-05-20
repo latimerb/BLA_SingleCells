@@ -1,5 +1,6 @@
-begintemplate detailedpyrtypeC
+//begintemplate detailedpyrtypeC
 
+/*
 public init, connect_sections, size_sections, append_sections, define_synapses
 public mechinit, insert_mechs, set_biophys, get_root
 public  pre_list, connect_pre, is_art, is_connected, gid, randi
@@ -7,6 +8,7 @@ public soma, dend, axon
 public all, soma_list, axon_list, dendrite_list
 public x, y, z, position, myroot, myrootsec, Vrest
 public NumSoma, NumDend, NumAxon
+*/
 
 // strings
 strdef myroot, myname
@@ -15,32 +17,34 @@ strdef myroot, myname
 objref syn, pre_list, templist, rootlist, myrootsec, this
 
 // external variables
-external numCellTypes, cellType
+//external numCellTypes, cellType
 
 // create the sections
 create soma[1], dend[76], axon[11]
 
 proc init() {
-	gid = $1
-	randi = $2
+	//gid = $1
+	//randi = $2
 	
 	// morphology
 	connect_sections()	// local fcn: connect soma, dendrites, axon initial segment
 	size_sections()		// local fcn: set the size dimensions of each section
 	define_shape()		// builtin fcn: fill in 3d info for sections defined by only L and diam, translate 3d points for consistency with their connections 
   	append_sections()	// local fcn: append all sections to the section list
-	set_nseg()			// local fcn: set the number of segments in each section
-	get_root()			// local fcn: perform morphology checks
+	//set_nseg()			// local fcn: set the number of segments in each section
+	//get_root()			// local fcn: perform morphology checks
 
 	// electrophysiology
 	mechinit()			// local fcn: set values for max conductances and reversal potentials of ion channels and other ephys parameters that are subject to fitting
 	insert_mechs()		// local fcn: insert ion channels and actually set values determined in the mechinit fcn
-	set_chanparams()	// local fcn: after all channels have been inserted, then their other parameters can be set	
+	//set_chanparams()	// local fcn: after all channels have been inserted, then their other parameters can be set	
 
 	// synapses
 	pre_list = new List() // define a list for the presynaptic connections	
-	define_synapses($3)	// local fcn: define all possible synaptic connections received by this cell
+	//define_synapses($3)	// local fcn: define all possible synaptic connections received by this cell
 }
+
+
 
 proc connect_sections() { local i
 	connect dend(0), soma[0](0.5)
@@ -1147,11 +1151,13 @@ proc append_sections() { local i
 	axon[9] axon_list.append() //Only append AIS segment to receive synapses
 }
 
-
+/*
 external lambda_f
 proc set_nseg() {
   	forsec all { nseg = int((L/(0.1*lambda_f(100))+.9)/2)*2 + 1  }
 }
+*/
+
 proc mechinit() {
 
 	// resting membrane potential. Must lie between Na+ and K+ reversal potentials
@@ -1310,6 +1316,10 @@ proc insert_mechs() {
 	
 }
 
+
+init()
+
+/*
 proc set_chanparams() {
 	forsec all {
 		
@@ -1406,3 +1416,4 @@ proc define_synapses() {
 }
 
 endtemplate detailedpyrtypeC
+*/
