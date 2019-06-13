@@ -82,7 +82,7 @@ begintemplate Cell_A
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -105,7 +105,7 @@ begintemplate Cell_A
 				insert sAHP gsAHPbar_sAHP = gsAHP
 				insert im gbar_im = gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
 				for (x,0) {
 				//print secname(),x
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
@@ -134,7 +134,7 @@ begintemplate Cell_A
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
 				
 				for (x,0) {
 				//print secname(),x,L
@@ -148,7 +148,7 @@ begintemplate Cell_A
 				}
 		
 			
-		
+		/*
 		forall {
 		  insert extracellular
 			v=Vrest
@@ -156,8 +156,8 @@ begintemplate Cell_A
 			ek = -80
 			if (ismembrane("kdr") || ismembrane("kap") || ismembrane("kad")) {ek=-80}
 			if (ismembrane("hd") ) {ehd_hd=-45 } // change from -30 to -50
-			for (x, 0) {
-			setpointer im_xtraimemrec(x), i_membrane(x)
+			//for (x, 0) {
+			//setpointer im_xtraimemrec(x), i_membrane(x)
 		setpointer ex_xtraimemrec(x), e_extracellular(x)
 		 tlist.append(new Vector())
         //int_tlist.append(new Vector()) //now int_tlist is necessarily the same length as tlist
@@ -167,7 +167,7 @@ begintemplate Cell_A
 		tlist.o(tlist.count()-1).record(&er_xtraimemrec(x),1) //changce recording resolution if needed
 }
 	
-	}	
+	}*/	
 			
 
 
@@ -188,6 +188,8 @@ obfunc connect2target() { localobj nc
 	return nc
 	}		
 endtemplate Cell_A
+
+/*
 
 ///////////////////////////////////////////////////////////
 
@@ -274,7 +276,7 @@ begintemplate Cell_ADA
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -297,7 +299,7 @@ begintemplate Cell_ADA
 				insert sAHP gsAHPbar_sAHP = gsAHP
 				insert im gbar_im = gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
 				for (x,0) {
 				//print secname(),x
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
@@ -324,7 +326,7 @@ begintemplate Cell_ADA
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
 				
 				for (x,0) {
 				//print secname(),x,L
@@ -455,7 +457,7 @@ begintemplate Cell_ANE
 				insert sAHPNE gsAHPbar_sAHPNE = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -478,7 +480,7 @@ begintemplate Cell_ANE
 				insert sAHPNE gsAHPbar_sAHPNE = gsAHP
 				insert im gbar_im = gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
 				for (x,0) {
 				//print secname(),x
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
@@ -505,7 +507,7 @@ begintemplate Cell_ANE
 				insert sAHPNE gsAHPbar_sAHPNE = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
 				for (x,0) {
 				//print secname(),x,L
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+x*L
@@ -637,7 +639,7 @@ begintemplate Cell_ADANE
 				insert sAHPNE gsAHPbar_sAHPNE = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -660,7 +662,7 @@ begintemplate Cell_ADANE
 				insert sAHPNE gsAHPbar_sAHPNE = gsAHP
 				insert im gbar_im = gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
 				for (x,0) {
 				//print secname(),x
 				//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
@@ -687,7 +689,7 @@ begintemplate Cell_ADANE
 				insert sAHPNE gsAHPbar_sAHPNE = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
 				insert kap gkabar_kap = gkap
-                insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
+                //insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
 				
 				for (x,0) {
 				//print secname(),x,L
@@ -818,7 +820,7 @@ begintemplate Cell_B
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -841,7 +843,7 @@ begintemplate Cell_B
 				insert sAHP gsAHPbar_sAHP = gsAHP
 				insert im gbar_im = gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
 				for (x,0) {
 				//print secname(),x
 				x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
@@ -868,7 +870,7 @@ begintemplate Cell_B
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
 				
 				for (x,0) {
 				//print secname(),x,L
@@ -999,7 +1001,7 @@ begintemplate Cell_BDA
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -1022,7 +1024,7 @@ begintemplate Cell_BDA
 				insert sAHP gsAHPbar_sAHP = gsAHP
 				insert im gbar_im = gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
 				for (x,0) {
 				//print secname(),x
 				x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000
@@ -1049,7 +1051,7 @@ begintemplate Cell_BDA
 				insert sAHP gsAHPbar_sAHP = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
 				insert kap gkabar_kap = gkap
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000+270/2
 				
 				for (x,0) {
 				//print secname(),x,L
@@ -1179,7 +1181,7 @@ begintemplate Cell_BNE
 				insert sAHPNE gsAHPbar_sAHPNE = 0
 				insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 0.8*gm
 				insert kap gkabar_kap = 0
-				insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
+				//insert xtraimemrec	//x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-555/2
 				for (x,0) {
 				//print secname(),x,L
 				x_xtra=$1*1000 y_xtra=$2*1000 z_xtra=$3*1000-x*L
@@ -2178,3 +2180,4 @@ obfunc connect2target() { localobj nc
 	}	
 endtemplate Cell_CDANE
 
+*/
