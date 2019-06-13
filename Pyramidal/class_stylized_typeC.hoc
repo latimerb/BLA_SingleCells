@@ -83,8 +83,8 @@ begintemplate stylized_typeC
 		Vrest = -70
 		celsius = 31.0 
 
-		gna12_ais_max = 3000/2   // Nav1.2 
-		gna16_ais_max = 3200/2   // Nav1.6
+		gna12_ais_max = 3000   // Nav1.2 
+		gna16_ais_max = 3200   // Nav1.6
 		gkv_axon = 1000
 
 		tha_na16 = -45 // Low threshold
