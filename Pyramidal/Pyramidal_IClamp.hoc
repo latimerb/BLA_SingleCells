@@ -1,6 +1,6 @@
 {load_file("nrngui.hoc")}
 //{load_file("class_Henckens_AM-C1A.hoc")}
-{load_file("simple_pyrtypeC_LFPy.hoc")}
+{load_file("class_stylized_typeC.hoc")}
 
 
 ////// Function to compute input resistance //////
@@ -144,9 +144,9 @@ proc AssignCondandRun(){localobj cell,mat,tgt,vec1,vec2
 objref ccl[2]
 proc ConnectCClamp(){
 	$o1.soma ccl[0] = new IClamp(.5)
-	ccl[0].del = 200
-	ccl[0].dur = 500
-	ccl[0].amp = 0.1
+	ccl[0].del = 500
+	ccl[0].dur = 1000
+	ccl[0].amp = 0.2
 }
 
 
@@ -158,16 +158,17 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 	for i=0,0{
 		stim[i] = new NetStim()
 		stim[i].interval = 50 //(ms)
-		stim[i].number = 1
-		stim[i].start = 150+150*i //(ms)
+		stim[i].number = 5
+		stim[i].start = 500+150*i //(ms)
 		stim[i].noise = 0
 		
 		$o1.axon[9] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
 		Chn2PyrSyn[i].tau1 = 0.132
 		Chn2PyrSyn[i].tau2 = 3.74
-		Chn2PyrSyn[i].e = -40
+		Chn2PyrSyn[i].e = -50
 
 		Chn2PyrNC[i] = new NetCon(stim[i], Chn2PyrSyn[i])
+		Chn2PyrNC[i].delay = 0
 		Chn2PyrNC[i].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
 	}
 	/*
@@ -199,14 +200,15 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 /////////////////////////////////////////////////////////////////////////////
 
 
-tstop = 700
+tstop = 2000
 objref Cell // declare neuron object
-Cell = new simple_pyrtypeC_LFPy() // build neuron from template
+Cell = new stylized_typeC() // build neuron from template
 //Cell = new Henckens_PyrAMC1A()
 
 print "Input resistance: ", rn(Cell), "Megaohms"
 totalarea()
 
 ConnectCClamp(Cell)
+//ConnectNetStimtoAISsegs(Cell)
 
 
