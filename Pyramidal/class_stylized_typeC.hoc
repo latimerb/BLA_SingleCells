@@ -17,29 +17,30 @@ Note the conventions:
 
 begintemplate stylized_typeC
 
-	public soma, dend, axon
+	public soma, dend, apic, axon
 
 	create soma[1]
-	create dend[2]
+	create dend[1]
+	create apic[1]
 	create axon[11]
 	
 	proc init(){
 
 		soma[0] {pt3dclear()
-			pt3dadd(0, 0, 0, 24.75)
-			pt3dadd(0, 0, 25, 24.75)
+			pt3dadd(0, 0, 0, 25.413)
+			pt3dadd(0, 0, 25.413, 25.413)
 			nseg = 1
 		}
 
-		dend[0] {pt3dclear()
-			pt3dadd(0, 0, 25, 5)
-			pt3dadd(0, 0, 580, 5)
+		apic[0] {pt3dclear()
+			pt3dadd(0, 0, 25.413, 4.324)
+			pt3dadd(0, 0, 25.413+450, 4.324)
 			nseg = 7
 		}
 
-		dend[1] {pt3dclear()
-			pt3dadd(0, 0, 0, 3)
-			pt3dadd(0, 0, -270, 3)
+		dend[0] {pt3dclear()
+			pt3dadd(0, 0, 0, 14.67)
+			pt3dadd(0, 0, -150, 14.67)
 			nseg = 8    
 		}
 
@@ -55,8 +56,8 @@ begintemplate stylized_typeC
 			pt3dadd(-150,0,0,1.22)
 		}
 
-		connect dend[0](0), soma[0](1)
-		connect dend[1](0), soma[0](0)
+		connect apic[0](0), soma[0](1)
+		connect dend[0](0), soma[0](0)
 		connect axon[0](0), soma[0](0.5)
 		for i=1,10{connect axon[i](0), axon[i-1](1)}
 
@@ -66,7 +67,7 @@ begintemplate stylized_typeC
 		RaDend = 150
 		RaAx = 150
 
-		Rm = 60000
+		Rm = 30000
 
 		gna = 0.015 
 		gnap = 5e-4
@@ -75,7 +76,7 @@ begintemplate stylized_typeC
 		gca = 5.5e-4 
 		gm = 0.00224 // 0.00222  
 		gsAHP = 0.0005//0.0019
-		gkap = 0.002 
+		gkap = 0.002
 		gleak = 1/Rm //2.5e-5
 		gleak_dend= 1/Rm //1.57*3.0e-5
 					
@@ -87,74 +88,82 @@ begintemplate stylized_typeC
 		gna16_ais_max = 3200   // Nav1.6
 		gkv_axon = 1000
 
-		tha_na16 = -45 // Low threshold
+		tha_na16 = -50 // Low threshold
 		tha_na12 = -30 // High threshold
+		//tha_kv = 30 
 		
 		dend[0]{
 			insert pas e_pas = -72  g_pas = gleak_dend Ra=RaDend cm = Cm
-			insert na12  gbar_na12=gna12_ais_max/10
+			insert na12  gbar_na12 = gna12_ais_max/10
 			//insert na16  gbar_na16=0
 			insert kv    gbar_kv = gkv_axon/10 //Hu et al.
-			
+			insert nap gbar_nap = 0 gbar_nap(1/(2*nseg)) = 1.0*gnap
+			insert kap gkabar_kap = gkap
+			/*
 			insert cadyn gcabar_cadyn = gca  eca = 120	
 			insert hd ghdbar_hd = ghd
 			//insert na3 sh_na3=nash ar_na3=1	gbar_na3 = gna
-			insert nap gbar_nap = 0 gbar_nap(1/(2*nseg)) = 1.0*gnap
+			
 			//insert kdr gbar_kdr = gkdr
 			insert capool taucas = 1000  fcas_capool = 0.05 
 			insert sAHP gsAHPbar_sAHP = 0
 			insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
-			insert kap gkabar_kap = gkap
+			
+			*/
 		}
 
-		dend[1]{
+		apic[0]{
 			insert pas e_pas = -72  g_pas = gleak_dend Ra=RaDend cm = Cm
 			insert na12  gbar_na12=gna12_ais_max/10
 			//insert na16  gbar_na16=0
 			insert kv    gbar_kv = gkv_axon/10 //Hu et al.
-			
+			insert nap gbar_nap = 0 gbar_nap(1/(2*nseg)) = 1.0*gnap
+			insert kap gkabar_kap = gkap
+			/*
 			insert cadyn gcabar_cadyn = gca  eca = 120	
 			insert hd ghdbar_hd = ghd
 			//insert na3 sh_na3=nash ar_na3=1	gbar_na3 = gna
-			insert nap gbar_nap = 0 gbar_nap(1/(2*nseg)) = 1.0*gnap
+			
 			//insert kdr gbar_kdr = gkdr
 			insert capool taucas = 1000  fcas_capool = 0.05 
 			insert sAHP gsAHPbar_sAHP = 0
 			insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
-			insert kap gkabar_kap = gkap
 			
+			*/
 		}
 
 		soma[0]{	
 			insert pas e_pas = -72  g_pas = gleak Ra=RaDend cm = Cm
-			insert na12  gbar_na12=gna12_ais_max/2 //Hu et al
+			insert na12  gbar_na12=gna12_ais_max/4 //Hu et al
 			//insert na16  gbar_na16=0
 			insert kv    gbar_kv = gkv_axon/2
+			insert nap gbar_nap = gnap
+			insert kap gkabar_kap = gkap
+			/*
 			insert sAHP gsAHPbar_sAHP = gsAHP //causes adaptation
 			
-			insert nap gbar_nap = gnap
 			insert cadyn gcabar_cadyn = gca  eca = 120
 			insert hd ghdbar_hd = ghd 
 			//insert kdr gbar_kdr = gkdr
 			insert capool taucas = 1000  fcas_capool = 0.05 //only in dend and p_dend
-			
 			insert im gbar_im = gm
-			insert kap gkabar_kap = gkap
+			
 			//insert na3 sh_na3=nash ar_na3=1	gbar_na3 = 3*gna
+			*/
 		}
 
 		for i=0,9 axon[i] {
 			insert pas
-			Ra = RaAx//50000
+			Ra = RaAx
 			cm = Cm 
 			g_pas = 1/Rm
 			e_pas = -72
 			insert na12  //gbar_na12=0
 			insert na16  //gbar_na16=0
 			insert kv    //gbar_kv = 0
-			ena = 45
-			ek = -90
-			insert nap gbar_nap = gnap
+			//ena = 45
+			//ek = -90
+			insert nap gbar_nap = 2*gnap
 		}
 
 		axon[10]{
@@ -166,8 +175,8 @@ begintemplate stylized_typeC
 			insert na12  
 			insert na16  
 			insert kv    
-			ena = 45
-			ek = -90
+			//ena = 45
+			//ek = -90
 			insert nap gbar_nap = gnap
 		}
 			
