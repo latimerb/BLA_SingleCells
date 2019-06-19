@@ -1,10 +1,11 @@
 
 COMMENT
 
-kv.mod
+km.mod
 
 Potassium channel, Hodgkin-Huxley style kinetics
-Kinetic rates based roughly on Sah et al. and Hamill et al. (1991)
+Based on I-M (muscarinic K channel)
+Slow, noninactivating
 
 Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
 	
@@ -13,7 +14,7 @@ ENDCOMMENT
 INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}
 
 NEURON {
-	SUFFIX kv
+	SUFFIX km
 	USEION k READ ek WRITE ik
 	RANGE n, gk, gbar
 	RANGE ninf, ntau
@@ -29,14 +30,14 @@ UNITS {
 } 
 
 PARAMETER {
-	gbar = 5   	(pS/um2)	: 0.03 mho/cm2
+	gbar = 10   	(pS/um2)	: 0.03 mho/cm2
 	v 		(mV)
 								
-	tha  = 25	(mV)		: v 1/2 for inf
+	tha  = -30	(mV)		: v 1/2 for inf
 	qa   = 9	(mV)		: inf slope		
 	
-	Ra   = 0.02	(/ms)		: max act rate
-	Rb   = 0.002	(/ms)		: max deact rate	
+	Ra   = 0.001	(/ms)		: max act rate  (slow)
+	Rb   = 0.001	(/ms)		: max deact rate  (slow)
 
 	dt		(ms)
 	celsius		(degC)

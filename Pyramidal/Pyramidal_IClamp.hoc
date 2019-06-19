@@ -170,7 +170,7 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 		stim[i].start = 500+150*i //(ms)
 		stim[i].noise = 0
 		
-		$o1.axon[9] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
+		$o1.axon[9] Chn2PyrSyn[i]= new MyExp2Sid(0.9)
 		Chn2PyrSyn[i].tau1 = 0.83
 		Chn2PyrSyn[i].tau2 = 6.27
 		Chn2PyrSyn[i].e = -50
@@ -211,6 +211,7 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 tstop = 2000
 v_init = -70
 
+
 objref Cell1 // declare neuron object
 Cell1 = new stylized_typeC() // build neuron from template
 
@@ -227,8 +228,8 @@ print "Input resistance: ", rn(Cell2), "Megaohms"
 totalarea()
 */
 
-//ConnectCClamp(Cell1,0)
+ConnectCClamp(Cell1,0)
 //ConnectCClamp(Cell2,1)
-ConnectNetStimtoAISsegs(Cell1)
+//ConnectNetStimtoAISsegs(Cell1)
 //ConnectNetStimtoAISsegs(Cell2)
 

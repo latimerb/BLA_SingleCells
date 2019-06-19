@@ -17,12 +17,13 @@ Note the conventions:
 
 begintemplate stylized_typeC
 
-	public soma, dend, apic, axon
+	public soma, dend, apic, axon, hill
 
 	create soma[1]
 	create dend[1]
 	create apic[1]
 	create axon[11]
+	create hill[1]
 	
 	proc init(){
 
@@ -44,148 +45,142 @@ begintemplate stylized_typeC
 			nseg = 8    
 		}
 
+		hill[0]{pt3dclear()
+			pt3dadd(-12.707,0,0,6)
+			pt3dadd(-12.707-2,0,0,5)
+			pt3dadd(-12.707-4,0,0,4)
+			pt3dadd(-12.707-6,0,0,3)
+			pt3dadd(-12.707-8,0,0,2)
+			pt3dadd(-12.707-10,0,0,1.3)
+			nseg = 10
+		}
+		
 		for i=1,10{
 			axon[i-1] {pt3dclear()
-				pt3dadd(-5*(i-1), 0, 0, 1.22)
-				pt3dadd(-5*(i-1)-5, 0, 0, 1.22)
+				pt3dadd(-12.707-5*(i-1)-10, 0, 0, 1.22)
+				pt3dadd(-12.707-5*(i-1)-15, 0, 0, 1.22)
 			}
 		}
 
 		axon[10]{pt3dclear()
-			pt3dadd(-50,0,0,1.22)
-			pt3dadd(-150,0,0,1.22)
+			pt3dadd(-12.707-60,0,0,1.22)
+			pt3dadd(-12.707-160,0,0,1.22)
 		}
 
+		// CONNECT SECTIONS //
 		connect apic[0](0), soma[0](1)
 		connect dend[0](0), soma[0](0)
-		connect axon[0](0), soma[0](0.5)
+		connect hill[0](0), soma[0](0.5)
+		connect axon[0](0), hill[0](1)
 		for i=1,10{connect axon[i](0), axon[i-1](1)}
 
-		Cm = 1.0
+		
+		// BIOPHYSICS //
+		Vrest = -70
+		Cm = 0.5
 		RaAll= 150
 		RaSoma= 150
 		RaDend = 150
 		RaAx = 150
 
 		Rm = 30000
-
-		gna = 0.015 
-		gnap = 5e-4
-		gkdr = 0.002 //0.002 
-		ghd = 1.5e-5 //1.5e-5
-		gca = 5.5e-4 
-		gm = 0.00224 // 0.00222  
-		gsAHP = 0.0005//0.0019
-		gkap = 0.002
-		gleak = 1/Rm //2.5e-5
-		gleak_dend= 1/Rm //1.57*3.0e-5
-					
-		nash=10
-		Vrest = -71
-		celsius = 31.0 
-
-		gna12_ais_max = 3000   // Nav1.2 
+		gleak = 1/Rm
+		Ena = 60
+		gna12_soma = 80
+		gna12_dend = 80 
+		gna12_ais_max = 3200   // Nav1.2 
 		gna16_ais_max = 3200   // Nav1.6
+		gna16_nakeaxon= 300    
+		gna12_myelin=20       // Nav1.2 at myelins
+		gna16_node = 3200     // Nav1.6 at node
+	  
+		vhalf_na12 = -30
+		vhalf_na16 = -43
+		vhalf_na = -30
+	  
+		// Kv
+		Ek = -90  
+		gkv_soma = 20
+		gkv_dend = 10 
 		gkv_axon = 1000
-
-		tha_na16 = -44 // Low threshold
-		tha_na12 = -30 // High threshold
-		qa_na16 = 5.7
-		qa_na12 = 5.8
-		thinf_na16 = -80
-		thinf_na12 = -67
-		qi_na12 = 7.1
-		qi_na16 = 5.4
-		tha_kv = 30 
+	  
+		// Km
+		gkm = .3
+		gkm_soma = gkm
+	  
+		// Kca
+		gkca = 3
+		gkca_soma = gkca
+	  
+		// Ca
+		Eca=140
+		gca = .3
+		gca_soma = gca
+		
+		forall {
+			insert na gbar_na=0
+			insert na12  gbar_na12=0
+			insert na16  gbar_na16=0
+			insert kv    gbar_kv=0
+			insert km    gbar_km=0
+			insert kca   gbar_kca=0
+			insert ca    gbar_ca=0
+		}
+		// Added by Hu et al. 2009
+		vshift_na12 = -35 - vhalf_na12 -10  // negative shift of input voltage, high threshold  -30mV    
+		vshift_na16 = -35 - vhalf_na16 -10    // positive shift of input voltage, low threshold  -43mV
+		vshift_na = -35 - vhalf_na -10  // the same as Na12
+		
+		forall if(ismembrane("k_ion")) ek = Ek
+		forall if(ismembrane("na_ion")) ena = Ena
+		forall if(ismembrane("ca_ion")) {
+			eca = Eca
+			ion_style("ca_ion",0,1,0,0,0)
+			vshift_ca = 0
+		}
+		
 		
 		dend[0]{
-			insert pas e_pas = Vrest  g_pas = gleak_dend Ra=RaDend cm = Cm
-			insert na12  gbar_na12 = gna12_ais_max/10
-			//insert na16  gbar_na16=0
-			insert kv    gbar_kv = gkv_axon/10 //Hu et al.
-			insert nap gbar_nap = 0 gbar_nap(1/(2*nseg)) = 1.0*gnap
-			insert kap gkabar_kap = gkap
-			/*
-			insert cadyn gcabar_cadyn = gca  eca = 120	
-			insert hd ghdbar_hd = ghd
-			//insert na3 sh_na3=nash ar_na3=1	gbar_na3 = gna
-			
-			//insert kdr gbar_kdr = gkdr
-			insert capool taucas = 1000  fcas_capool = 0.05 
-			insert sAHP gsAHPbar_sAHP = 0
-			insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
-			
-			*/
+			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
+			gbar_na = gna12_dend    // 80
+			gbar_kv = gkv_dend        // 20                            
+			gbar_km  = gkm            // 0.3                           
+			gbar_kca = gkca           // 0.3                           
+			gbar_ca = gca             // 0.3                           
+			insert cad                // Internal calcium concentration mechanism only at somatodendritic region.
 		}
 
 		apic[0]{
-			insert pas e_pas = Vrest  g_pas = gleak_dend Ra=RaDend cm = Cm
-			insert na12  gbar_na12=gna12_ais_max/10
-			//insert na16  gbar_na16=0
-			insert kv    gbar_kv = gkv_axon/10 //Hu et al.
-			insert nap gbar_nap = 0 gbar_nap(1/(2*nseg)) = 1.0*gnap
-			insert kap gkabar_kap = gkap
-			/*
-			insert cadyn gcabar_cadyn = gca  eca = 120	
-			insert hd ghdbar_hd = ghd
-			//insert na3 sh_na3=nash ar_na3=1	gbar_na3 = gna
-			
-			//insert kdr gbar_kdr = gkdr
-			insert capool taucas = 1000  fcas_capool = 0.05 
-			insert sAHP gsAHPbar_sAHP = 0
-			insert im gbar_im = 0 gbar_im(1/(2*nseg)) = 1.0*gm
-			
-			*/
+			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
+			gbar_na = gna12_dend    // 80
+			gbar_kv = gkv_dend        // 20                            
+			gbar_km  = gkm            // 0.3                           
+			gbar_kca = gkca           // 0.3                           
+			gbar_ca = gca             // 0.3                           
+			insert cad                // Internal calcium concentration mechanism only at somatodendritic region.
 		}
 
 		soma[0]{	
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
-			insert na12  gbar_na12=gna12_ais_max/4 //Hu et al
-			//insert na16  gbar_na16=0
-			insert kv    gbar_kv = gkv_axon/2
-			insert nap gbar_nap = gnap
-			insert kap gkabar_kap = gkap
-			/*
-			insert sAHP gsAHPbar_sAHP = gsAHP //causes adaptation
-			
-			insert cadyn gcabar_cadyn = gca  eca = 120
-			insert hd ghdbar_hd = ghd 
-			//insert kdr gbar_kdr = gkdr
-			insert capool taucas = 1000  fcas_capool = 0.05 //only in dend and p_dend
-			insert im gbar_im = gm
-			
-			//insert na3 sh_na3=nash ar_na3=1	gbar_na3 = 3*gna
-			*/
+			gbar_na=gna12_soma          // 80
+			gbar_kv = gkv_soma            // 20 
+			gbar_km = gkm_soma            // 0.3
+			gbar_kca = gkca_soma          // 0.3
+			gbar_ca = gca_soma            // 0.3
+		}
+		
+		hill[0]{
+			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
 		}
 
 		for i=0,9 axon[i] {
-			insert pas
-			Ra = RaAx
-			cm = Cm 
-			g_pas = 1/Rm
-			e_pas = Vrest
-			insert na12  //gbar_na12=0
-			insert na16  //gbar_na16=0
-			insert kv    //gbar_kv = 0
-			//ena = 45
-			//ek = -90
-			insert nap gbar_nap = 2*gnap
+			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
 		}
 
 		axon[10]{
-			insert pas
-			Ra = RaAx
-			cm = 0.2 //myelin 
-			g_pas = 1/Rm
-			e_pas = Vrest
-			insert na12  
-			insert na16  
-			insert kv    
-			//ena = 45
-			//ek = -90
-			insert nap gbar_nap = gnap
+			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
 		}
-			
+		hill[0].gbar_na12 = gna12_ais_max*	1	*	0.8
 		axon[0].gbar_na12 = gna12_ais_max*0.96*1
 		axon[1].gbar_na12 = gna12_ais_max*0.9*1                      
 		axon[2].gbar_na12 = gna12_ais_max*0.75*1                    
@@ -198,6 +193,7 @@ begintemplate stylized_typeC
 		axon[9].gbar_na12 = gna12_ais_max*0*0.342857143 
 		axon[10].gbar_na12 = gna12_ais_max*0*0.342857143 
 			
+		hill[0].gbar_na16 = gna16_ais_max	    *	0	*	0.8
 		axon[0].gbar_na16 = gna16_ais_max	*	0.04	*	1   
 		axon[1].gbar_na16 = gna16_ais_max	*	0.1	*	1   
 		axon[2].gbar_na16 = gna16_ais_max	*	0.25	*	1   
@@ -210,6 +206,7 @@ begintemplate stylized_typeC
 		axon[9].gbar_na16 = gna16_ais_max	*	1	*	0.342857143  
 		axon[10].gbar_na16 = gna16_ais_max	*	1	*	0.342857143  
 						
+		hill[0].gbar_kv = gkv_axon	*	0.1
 		axon[0].gbar_kv = gkv_axon	*	0.2 
 		axon[1].gbar_kv = gkv_axon	*	0.3 
 		axon[2].gbar_kv = gkv_axon	*	0.4 
@@ -221,6 +218,8 @@ begintemplate stylized_typeC
 		axon[8].gbar_kv = gkv_axon	*	1
 		axon[9].gbar_kv = gkv_axon	*	1
 		axon[10].gbar_kv = gkv_axon	*	1
+		
 	}
+	
 init()
 endtemplate stylized_typeC
