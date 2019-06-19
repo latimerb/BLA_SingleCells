@@ -81,19 +81,25 @@ begintemplate stylized_typeC
 		gleak_dend= 1/Rm //1.57*3.0e-5
 					
 		nash=10
-		Vrest = -70
+		Vrest = -71
 		celsius = 31.0 
 
 		gna12_ais_max = 3000   // Nav1.2 
 		gna16_ais_max = 3200   // Nav1.6
 		gkv_axon = 1000
 
-		tha_na16 = -50 // Low threshold
+		tha_na16 = -44 // Low threshold
 		tha_na12 = -30 // High threshold
-		//tha_kv = 30 
+		qa_na16 = 5.7
+		qa_na12 = 5.8
+		thinf_na16 = -80
+		thinf_na12 = -67
+		qi_na12 = 7.1
+		qi_na16 = 5.4
+		tha_kv = 30 
 		
 		dend[0]{
-			insert pas e_pas = -72  g_pas = gleak_dend Ra=RaDend cm = Cm
+			insert pas e_pas = Vrest  g_pas = gleak_dend Ra=RaDend cm = Cm
 			insert na12  gbar_na12 = gna12_ais_max/10
 			//insert na16  gbar_na16=0
 			insert kv    gbar_kv = gkv_axon/10 //Hu et al.
@@ -113,7 +119,7 @@ begintemplate stylized_typeC
 		}
 
 		apic[0]{
-			insert pas e_pas = -72  g_pas = gleak_dend Ra=RaDend cm = Cm
+			insert pas e_pas = Vrest  g_pas = gleak_dend Ra=RaDend cm = Cm
 			insert na12  gbar_na12=gna12_ais_max/10
 			//insert na16  gbar_na16=0
 			insert kv    gbar_kv = gkv_axon/10 //Hu et al.
@@ -133,7 +139,7 @@ begintemplate stylized_typeC
 		}
 
 		soma[0]{	
-			insert pas e_pas = -72  g_pas = gleak Ra=RaDend cm = Cm
+			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
 			insert na12  gbar_na12=gna12_ais_max/4 //Hu et al
 			//insert na16  gbar_na16=0
 			insert kv    gbar_kv = gkv_axon/2
@@ -157,7 +163,7 @@ begintemplate stylized_typeC
 			Ra = RaAx
 			cm = Cm 
 			g_pas = 1/Rm
-			e_pas = -72
+			e_pas = Vrest
 			insert na12  //gbar_na12=0
 			insert na16  //gbar_na16=0
 			insert kv    //gbar_kv = 0
@@ -171,7 +177,7 @@ begintemplate stylized_typeC
 			Ra = RaAx
 			cm = 0.2 //myelin 
 			g_pas = 1/Rm
-			e_pas = -72
+			e_pas = Vrest
 			insert na12  
 			insert na16  
 			insert kv    

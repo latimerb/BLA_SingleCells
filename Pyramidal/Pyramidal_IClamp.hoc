@@ -209,6 +209,7 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 
 
 tstop = 2000
+v_init = -70
 
 objref Cell1 // declare neuron object
 Cell1 = new stylized_typeC() // build neuron from template
