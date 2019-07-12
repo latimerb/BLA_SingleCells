@@ -33,7 +33,7 @@ NEURON {
 
 PARAMETER {
 	gbar = 1000   	(pS/um2)	: 0.12 mho/cm2
-	vshift = -5	(mV)		: voltage shift (affects all)
+	vshift = -75	(mV)		: voltage shift (affects all)
 								
 	tha  = -43	(mV)		: v 1/2 for act		
 	qa   = 7	(mV)		: act slope		

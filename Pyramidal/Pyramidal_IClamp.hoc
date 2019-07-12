@@ -1,5 +1,5 @@
 {load_file("nrngui.hoc")}
-{load_file("class_Henckens_AM-C1A.hoc")}
+//{load_file("class_Henckens_AM-C1A.hoc")}
 {load_file("class_stylized_typeC.hoc")}
 
 
@@ -166,18 +166,18 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 	for i=0,0{
 		stim[i] = new NetStim()
 		stim[i].interval = 200 //(ms)
-		stim[i].number = 2
-		stim[i].start = 500+150*i //(ms)
+		stim[i].number = 1
+		stim[i].start = 1500+150*i //(ms)
 		stim[i].noise = 0
 		
-		$o1.axon[9] Chn2PyrSyn[i]= new MyExp2Sid(0.9)
+		$o1.axon[10] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
 		Chn2PyrSyn[i].tau1 = 0.83
 		Chn2PyrSyn[i].tau2 = 6.27
 		Chn2PyrSyn[i].e = -50
 
 		Chn2PyrNC[i] = new NetCon(stim[i], Chn2PyrSyn[i])
 		Chn2PyrNC[i].delay = 0
-		Chn2PyrNC[i].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+		Chn2PyrNC[i].weight = .016 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
 	}
 	/*
 	access CellA.soma
@@ -210,7 +210,8 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 
 tstop = 2000
 v_init = -70
-
+V_rest = -70
+celsius = 22
 
 objref Cell1 // declare neuron object
 Cell1 = new stylized_typeC() // build neuron from template
@@ -221,15 +222,40 @@ totalarea()
 
 /*
 objref Cell2
-Cell2 = new Henckens_PyrAMC1A()
+Cell2 = new stylized_typeC()
 
 print "-----Detailed-----\n"
 print "Input resistance: ", rn(Cell2), "Megaohms"
 totalarea()
 */
 
-ConnectCClamp(Cell1,0)
+//ConnectCClamp(Cell1,0)
 //ConnectCClamp(Cell2,1)
-//ConnectNetStimtoAISsegs(Cell1)
+ConnectNetStimtoAISsegs(Cell1)
 //ConnectNetStimtoAISsegs(Cell2)
 
+xopen("plot.ses")
+
+/* Panel to Change Vrest */  
+/*
+xpanel("Pyramidal Cell",0)
+{
+  xbutton( " 2. AP initiation site test", " APinit()")
+}
+xpanel(100,100)
+
+
+xpanel("Vrest", 0)
+{
+  xvalue("Vrest","V_rest")
+}
+xpanel(8,700)
+
+proc APinit()  {
+  objref Cell1 // declare neuron object
+  Cell1 = new stylized_typeC(V_rest) // build neuron from template
+  ConnectNetStimtoAISsegs(Cell1)
+  init()
+  run()
+  }
+ */

@@ -1,0 +1,128 @@
+{load_file("nrngui.hoc")}
+{load_file("class_chandelierWB.hoc")}
+{load_file("class_axoaxoniccellmean.hoc")}
+
+
+// Procedure to make gap junctions
+// $1 - target (postsynaptic cell)
+// $2 - source synapse ID
+// $3 - future source synapse ID (current target will be future source)
+objref g[2]
+proc par_gap_create1() {
+	objref g[2]
+	g[0] = new HalfGap(.5)
+	g[0].r = 150
+	g[1] = new HalfGap(.5)
+	g[1].r = 150
+	
+	$o1.soma g[0].loc(0.5)
+	$o2.soma g[1].loc(0.5)
+
+	setpointer g[0].vgap, $o2.soma.v(0.5)
+	setpointer g[1].vgap, $o1.soma.v(0.5)
+}
+
+
+////// Function to compute input resistance //////
+objref zz
+zz = new Impedance()
+
+func rn() { local rn
+   init()  // make sure all changes to g, c, ri etc. have taken effect
+   $o1.soma zz.loc(0.5)  // sets origin for impedance calculations to middle of soma
+   zz.compute(0)  // DC input R
+   $o1.soma { rn = zz.input(0.5) }  // rn is input R at middle of the soma
+   return rn
+}
+///////////////////////////////////////////////////
+
+//// Function to compute surface area
+proc totalarea() { local sum
+  sum = 0
+  forall for(x,0) sum += area(x)
+  forsec "soma" for(x,0) sum_soma += area(x)
+  forsec "axon" for(x,0) sum_axon += area(x)
+  forsec "dend" for(x,0) sum_dend += area(x)
+  forsec "apic" for(x,0) sum_apic += area(x)
+  print "total surface area = ", sum, " um2"
+  print "soma surface area = ", sum_soma, " um2"
+  print "axon surface area = ", sum_axon, " um2"
+  print "dend surface area = ", sum_dend, " um2"
+  print "apic surface area = ", sum_apic, " um2"
+}
+
+// Add current clamp
+objref ccl[2]
+proc ConnectCClamp(){
+	$o1.soma ccl[$2] = new IClamp(.5)
+	ccl[$2].del = 500
+	ccl[$2].dur = 1
+	ccl[$2].amp = 1
+}
+
+objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
+proc ConnectNetStimtoAISsegs(){ local i
+objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
+
+// Make netstim to provide spikes
+	for i=0,0{
+		stim[i] = new NetStim()
+		stim[i].interval = 4 //(ms)
+		stim[i].number = 5
+		stim[i].start = 100+150*i //(ms)
+		stim[i].noise = 0
+		
+		$o1.soma[0] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
+		Chn2PyrSyn[i].tau1 = 0.88
+		Chn2PyrSyn[i].tau2 = 2.3
+		Chn2PyrSyn[i].e = 0
+
+		Chn2PyrNC[i] = new NetCon(stim[i], Chn2PyrSyn[i])
+		Chn2PyrNC[i].delay = 0
+		Chn2PyrNC[i].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+	}
+	/*
+	access CellA.soma
+	vclamp[0] = new SEClamp(0.5)
+	vclamp[0].rs = .01 // Mohm:series resistance should be much smaller than input resistance of the cell
+	vclamp[0].dur1 = 0
+	vclamp[0].amp1 = 0
+	vclamp[0].dur2 = tstop
+	vclamp[0].amp2 = 0
+	vclamp[0].dur3 = 0
+	vclamp[0].amp3 = 0
+	
+	for i=9,9{
+		access CellA.axon[i]
+		vclamp[i] = new SEClamp(0.5)
+		vclamp[i].rs = .1 // Mohm:series resistance should be much smaller than input resistance of the cell
+		vclamp[i].dur1 = 0
+		vclamp[i].amp1 = 0
+		vclamp[i].dur2 = tstop
+		vclamp[i].amp2 = 0
+		vclamp[i].dur3 = 0
+		vclamp[i].amp3 = 0
+	}
+	*/
+}
+/////////////////////////////////////////////////
+//////////////// MAIN ///////////////////////////
+/////////////////////////////////////////////////
+
+tstop = 700
+v_init = -70
+V_rest = -70
+
+objref Cell1,Cell2 // declare neuron object
+Cell1 = new chandelierWB() // build neuron from template
+Cell2 = new chandelierWB()
+
+par_gap_create1(Cell1,Cell2)
+//ConnectCClamp(Cell1,0)
+ConnectNetStimtoAISsegs(Cell1)
+
+print "-----Stylized-----\n"
+print "Input resistance: ", rn(Cell1), "Megaohms"
+totalarea()
+
+xopen("plot.ses")
