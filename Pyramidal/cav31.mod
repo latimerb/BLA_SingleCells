@@ -15,7 +15,7 @@ PARAMETER {
 	v (mV)
 	celsius		(degC)
 	gbar=.008 (mho/cm2)
-    vhalfn=-43   (mV):-51.73:-36
+    vhalfn=-47   (mV):-51.73:-36
     vhalfl=-74   (mV):-85.4:-74
     kn=6.53   (1)
     kl=-5.4   (1)

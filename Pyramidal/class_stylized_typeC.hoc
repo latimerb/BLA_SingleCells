@@ -16,7 +16,7 @@ strdef myroot, myname
 objref syn, pre_list, templist, rootlist, myrootsec, this, rr, rotation
 
 // external variables
-external numCellTypes, cellType, VClampVector
+//external numCellTypes, cellType, VClampVector
 
 create soma[1]
 create dend[1]
@@ -26,25 +26,25 @@ create hill[1]
 	
 proc init(){
 
-	gid = $1
-	randi = $2
+	//gid = $1
+	//randi = $2
 	
 	// morphology
 	connect_sections()	// local fcn: connect soma, dendrites, axon initial segment
-	size_sections(gid)		// local fcn: set the size dimensions of each section
+	size_sections()		// local fcn: set the size dimensions of each section
 	define_shape()		// builtin fcn: fill in 3d info for sections defined by only L and diam, translate 3d points for consistency with their connections 
   	append_sections()	// local fcn: append all sections to the section list
 	set_nseg()			// local fcn: set the number of segments in each section
-	get_root()			// local fcn: perform morphology checks
+	//get_root()			// local fcn: perform morphology checks
 
 	// electrophysiology
-	mechinit(gid)			// local fcn: set values for max conductances and reversal potentials of ion channels and other ephys parameters that are subject to fitting
+	mechinit()			// local fcn: set values for max conductances and reversal potentials of ion channels and other ephys parameters that are subject to fitting
 	insert_mechs()		// local fcn: insert ion channels and actually set values determined in the mechinit fcn
 	set_chanparams()	// local fcn: after all channels have been inserted, then their other parameters can be set	
 
 	// synapses
 	pre_list = new List() // define a list for the presynaptic connections	
-	define_synapses($3)	// local fcn: define all possible synaptic connections received by this cell
+	//define_synapses($3)	// local fcn: define all possible synaptic connections received by this cell
 }
 
 
@@ -59,8 +59,8 @@ proc connect_sections() { local i
 proc size_sections() {local thetaz
 	//Rotation about z axis
 	objref rotation
-	rotation = new Random($1)
-	thetaz = rotation.uniform(0,2*PI)
+	//rotation = new Random($1)
+	thetaz = 0//rotation.uniform(0,2*PI)
 	//print "thetaz: ", thetaz
 	//print "pyramidal soma points: ",12.5*sin(thetaz),12.5*cos(thetaz),25*sin(thetaz),25*cos(thetaz)
 		soma[0] {pt3dclear()
@@ -306,7 +306,7 @@ proc set_chanparams() {
 	}
 }
 
-
+/*
 proc connect_pre() {  // $o1 target point process, $o2 returned NetCon
 	axon[10] $o2 = new NetCon (&v(0.5), $o1)
 			$o2.threshold = -10
@@ -404,5 +404,5 @@ proc define_synapses() {
 		findme = 1
 	}
 }
-	
+	*/
 endtemplate stylized_typeC
