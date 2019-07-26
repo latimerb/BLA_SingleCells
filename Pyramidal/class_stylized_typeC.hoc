@@ -150,8 +150,8 @@ proc mechinit() {
 
 		
 		// BIOPHYSICS //
-		Vrest = -76
-		Cm = 1
+		Vrest = -70
+		Cm = 0.5
 		RaAll= 150
 		RaSoma= 150
 		RaDend = 150
@@ -162,7 +162,7 @@ proc mechinit() {
 		Ena = 60
 		gna12_soma = 0//80
 		gna12_dend = 0//80 
-		gna12_ais_max = 3200   // Nav1.2 
+		gna12_ais_max = 0//3200   // Nav1.2 
 		gna16_ais_max = 3200   // Nav1.6
 		gna16_nakeaxon= 300    
 		gna12_myelin=20       // Nav1.2 at myelins
@@ -249,7 +249,7 @@ proc insert_mechs(){
 		
 		hill[0]{
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
-			gbar_cav31 = 0.008
+			gbar_cav31 = 0//0.008
 		}
 
 		for i=0,9 axon[i] {

@@ -154,7 +154,7 @@ proc ConnectCClamp(){
 	$o1.soma ccl[$2] = new IClamp(.5)
 	ccl[$2].del = 500
 	ccl[$2].dur = 1000
-	ccl[$2].amp = 0.05
+	ccl[$2].amp = -0.05
 }
 
 
@@ -165,19 +165,19 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 // Make netstim to provide spikes
 	for i=0,0{
 		stim[i] = new NetStim()
-		stim[i].interval = 200 //(ms)
+		stim[i].interval = 6 //(ms)
 		stim[i].number = 1
 		stim[i].start = 1500+150*i //(ms)
 		stim[i].noise = 0
 		
-		$o1.axon[10] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
-		Chn2PyrSyn[i].tau1 = 0.83
+		$o1.axon[9] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
+		Chn2PyrSyn[i].tau1 = 0.132
 		Chn2PyrSyn[i].tau2 = 6.27
 		Chn2PyrSyn[i].e = -50
 
 		Chn2PyrNC[i] = new NetCon(stim[i], Chn2PyrSyn[i])
 		Chn2PyrNC[i].delay = 0
-		Chn2PyrNC[i].weight = .016 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+		Chn2PyrNC[i].weight = .011 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
 	}
 	/*
 	access CellA.soma
@@ -209,7 +209,7 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 
 
 tstop = 2000
-v_init = -70
+v_init = -60
 V_rest = -70
 celsius = 22
 
