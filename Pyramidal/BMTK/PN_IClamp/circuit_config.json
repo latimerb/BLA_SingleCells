@@ -11,8 +11,7 @@
     "templates_dir": "$COMPONENTS_DIR/templates",
     "synaptic_models_dir": "$COMPONENTS_DIR/synaptic_models",
     "morphologies_dir": "$COMPONENTS_DIR/morphologies",
-    "mechanisms_dir": "$COMPONENTS_DIR/mechanisms",
-    "templates_dir": "$COMPONENTS_DIR/hoc_templates"
+    "mechanisms_dir": "$COMPONENTS_DIR/mechanisms"
   },
   "networks": {
     "nodes": [

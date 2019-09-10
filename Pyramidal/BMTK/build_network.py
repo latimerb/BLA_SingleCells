@@ -5,7 +5,7 @@ net.add_nodes(cell_name='Scnn1a_473845048',
               potental='exc',
               model_type='biophysical',
               model_template='hoc:stylized_typeC',
-              morphology='blank.swc'
+              morphology=None
               )
 
 net.build()

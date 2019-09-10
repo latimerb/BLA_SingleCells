@@ -1,2 +1,2 @@
-node_type_id model_template cell_name model_type potental morphology
-100 hoc:stylized_typeC Scnn1a_473845048 biophysical exc blank.swc
+node_type_id potental model_template cell_name model_type morphology
+100 exc hoc:stylized_typeC Scnn1a_473845048 biophysical 
