@@ -21,7 +21,7 @@
       "input_type": "current_clamp",
       "module": "IClamp",
       "node_set": "all",
-      "amp": 0.12,
+      "amp": 0.009,
       "delay": 500.0,
       "duration": 1000.0
     }
@@ -34,12 +34,6 @@
   "reports": {
     "v_report": {
       "variable_name": "v",
-      "cells": "all",
-      "module": "membrane_report",
-      "sections": "soma"
-    },
-    "cai_report": {
-      "variable_name": "cai",
       "cells": "all",
       "module": "membrane_report",
       "sections": "soma"
