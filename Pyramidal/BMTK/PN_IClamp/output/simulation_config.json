@@ -49,7 +49,7 @@
     "biophysical_neuron_models_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/biophysical_neuron_models",
     "__pycache___dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/__pycache__",
     "point_neuron_models_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/point_neuron_models",
-    "templates_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/templates",
+    "templates_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/hoc_templates",
     "synaptic_models_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/synaptic_models",
     "morphologies_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/morphologies",
     "mechanisms_dir": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms"
