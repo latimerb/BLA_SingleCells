@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* NOT VECTORIZED */
 #define NRN_VECTORIZED 0
 #include <stdio.h>
@@ -79,6 +79,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern Prop* nrn_point_prop_;
  static int _pointtype;
  static void* _hoc_create_pnt(_ho) Object* _ho; { void* create_point_process();
@@ -191,7 +200,7 @@ static void  nrn_jacob(_NrnThread*, _Memb_list*, int);
 static int _ode_count(int);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "GABAa",
  "gmax",
  0,
@@ -245,6 +254,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
 	 _hoc_create_pnt, _hoc_destroy_pnt, _member_func);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 9, 2);
   hoc_register_dparam_semantics(_mechtype, 0, "area");
   hoc_register_dparam_semantics(_mechtype, 1, "pntproc");
@@ -494,3 +507,176 @@ static void _initlists() {
    _t_exptable = makevector(2001*sizeof(double));
 _first = 0;
 }
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms/modfiles/gabaa.mod";
+static const char* nmodl_file_text = 
+  "TITLE minimal model of GABAa receptors\n"
+  "\n"
+  "COMMENT\n"
+  "-----------------------------------------------------------------------------\n"
+  "\n"
+  "	Minimal kinetic model for GABA-A receptors\n"
+  "	==========================================\n"
+  "\n"
+  "  Model of Destexhe, Mainen & Sejnowski, 1994:\n"
+  "\n"
+  "	(closed) + T <-> (open)\n"
+  "\n"
+  "  The simplest kinetics are considered for the binding of transmitter (T)\n"
+  "  to open postsynaptic receptors.   The corresponding equations are in\n"
+  "  similar form as the Hodgkin-Huxley model:\n"
+  "\n"
+  "	dr/dt = alpha * [T] * (1-r) - beta * r\n"
+  "\n"
+  "	I = gmax * [open] * (V-Erev)\n"
+  "\n"
+  "  where [T] is the transmitter concentration and r is the fraction of \n"
+  "  receptors in the open form.\n"
+  "\n"
+  "  If the time course of transmitter occurs as a pulse of fixed duration,\n"
+  "  then this first-order model can be solved analytically, leading to a very\n"
+  "  fast mechanism for simulating synaptic currents, since no differential\n"
+  "  equation must be solved (see Destexhe, Mainen & Sejnowski, 1994).\n"
+  "\n"
+  "-----------------------------------------------------------------------------\n"
+  "\n"
+  "  Based on voltage-clamp recordings of GABAA receptor-mediated currents in rat\n"
+  "  hippocampal slices (Otis and Mody, Neuroscience 49: 13-32, 1992), this model\n"
+  "  was fit directly to experimental recordings in order to obtain the optimal\n"
+  "  values for the parameters (see Destexhe, Mainen and Sejnowski, 1996).\n"
+  "\n"
+  "-----------------------------------------------------------------------------\n"
+  "\n"
+  "  This mod file includes a mechanism to describe the time course of transmitter\n"
+  "  on the receptors.  The time course is approximated here as a brief pulse\n"
+  "  triggered when the presynaptic compartment produces an action potential.\n"
+  "  The pointer \"pre\" represents the voltage of the presynaptic compartment and\n"
+  "  must be connected to the appropriate variable in oc.\n"
+  "\n"
+  "-----------------------------------------------------------------------------\n"
+  "\n"
+  "  See details in:\n"
+  "\n"
+  "  Destexhe, A., Mainen, Z.F. and Sejnowski, T.J.  An efficient method for\n"
+  "  computing synaptic conductances based on a kinetic model of receptor binding\n"
+  "  Neural Computation 6: 10-14, 1994.  \n"
+  "\n"
+  "  Destexhe, A., Mainen, Z.F. and Sejnowski, T.J.  Kinetic models of \n"
+  "  synaptic transmission.  In: Methods in Neuronal Modeling (2nd edition; \n"
+  "  edited by Koch, C. and Segev, I.), MIT press, Cambridge, 1996.\n"
+  "\n"
+  "\n"
+  "  Written by Alain Destexhe, Laval University, 1995\n"
+  "\n"
+  "-----------------------------------------------------------------------------\n"
+  "ENDCOMMENT\n"
+  "\n"
+  "\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	POINT_PROCESS GABAa\n"
+  "	:%POINTER pre\n"
+  "	RANGE C, R, R0, R1, g, gmax, lastrelease\n"
+  "	NONSPECIFIC_CURRENT i\n"
+  "	GLOBAL Cmax, Cdur, Alpha, Beta, Erev, Prethresh, Deadtime, Rinf, Rtau\n"
+  "}\n"
+  "UNITS {\n"
+  "	(nA) = (nanoamp)\n"
+  "	(mV) = (millivolt)\n"
+  "	(umho) = (micromho)\n"
+  "	(mM) = (milli/liter)\n"
+  "}\n"
+  "\n"
+  "PARAMETER {\n"
+  "\n"
+  "	Cmax	= 1	(mM)		: max transmitter concentration\n"
+  "	Cdur	= 1	(ms)		: transmitter duration (rising phase)\n"
+  "	Alpha	= 5	(/ms mM)	: forward (binding) rate\n"
+  "	Beta	= 0.18	(/ms)		: backward (unbinding) rate\n"
+  "	Erev	= -80	(mV)		: reversal potential\n"
+  "	Prethresh = 0 			: voltage level nec for release\n"
+  "	Deadtime = 1	(ms)		: mimimum time between release events\n"
+  "	gmax		(umho)		: maximum conductance\n"
+  "}\n"
+  "\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	v		(mV)		: postsynaptic voltage\n"
+  "	i 		(nA)		: current = g*(v - Erev)\n"
+  "	g 		(umho)		: conductance\n"
+  "	C		(mM)		: transmitter concentration\n"
+  "	R				: fraction of open channels\n"
+  "	R0				: open channels at start of release\n"
+  "	R1				: open channels at end of release\n"
+  "	Rinf				: steady state channels open\n"
+  "	Rtau		(ms)		: time constant of channel binding\n"
+  "	:%pre 				: pointer to presynaptic variable\n"
+  "	lastrelease	(ms)		: time of last spike\n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	R = 0\n"
+  "	C = 0\n"
+  "	Rinf = Cmax*Alpha / (Cmax*Alpha + Beta)\n"
+  "	Rtau = 1 / ((Alpha * Cmax) + Beta)\n"
+  "	lastrelease = -1000\n"
+  "}\n"
+  "\n"
+  "BREAKPOINT {\n"
+  "	SOLVE release\n"
+  "	g = gmax * R\n"
+  "	i = g*(v - Erev)\n"
+  "}\n"
+  "\n"
+  "PROCEDURE release() { LOCAL q\n"
+  "	:will crash if user hasn't set pre with the connect statement \n"
+  "\n"
+  "	q = ((t - lastrelease) - Cdur)		: time since last release ended\n"
+  "\n"
+  "						: ready for another release?\n"
+  "	if (q > Deadtime) {\n"
+  "		if (1){ :%pre > Prethresh) {		: spike occured?\n"
+  "			C = Cmax			: start new release\n"
+  "			R0 = R\n"
+  "			lastrelease = t\n"
+  "		}\n"
+  "						\n"
+  "	} else if (q < 0) {			: still releasing?\n"
+  "	\n"
+  "		: do nothing\n"
+  "	\n"
+  "	} else if (C == Cmax) {			: in dead time after release\n"
+  "		R1 = R\n"
+  "		C = 0.\n"
+  "	}\n"
+  "\n"
+  "\n"
+  "\n"
+  "	if (C > 0) {				: transmitter being released?\n"
+  "\n"
+  "	   R = Rinf + (R0 - Rinf) * exptable (- (t - lastrelease) / Rtau)\n"
+  "				\n"
+  "	} else {				: no release occuring\n"
+  "\n"
+  "  	   R = R1 * exptable (- Beta * (t - (lastrelease + Cdur)))\n"
+  "	}\n"
+  "\n"
+  "	VERBATIM\n"
+  "	return 0;\n"
+  "	ENDVERBATIM\n"
+  "}\n"
+  "\n"
+  "FUNCTION exptable(x) { \n"
+  "	TABLE  FROM -10 TO 10 WITH 2000\n"
+  "\n"
+  "	if ((x > -10) && (x < 10)) {\n"
+  "		exptable = exp(x)\n"
+  "	} else {\n"
+  "		exptable = 0.\n"
+  "	}\n"
+  "}\n"
+  ;
+#endif

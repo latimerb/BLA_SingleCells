@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -89,6 +89,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -145,7 +154,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "cadyn",
  "gcabar_cadyn",
  0,
@@ -204,6 +213,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 15, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "ca_ion");
@@ -242,7 +255,7 @@ static int _ode_spec1(_threadargsproto_);
  rate ( _threadargscomma_ v ) ;
  Du = Du  / (1. - dt*( ( ( ( - 1.0 ) ) ) / utau )) ;
  Dz = Dz  / (1. - dt*( ( ( ( - 1.0 ) ) ) / ztau )) ;
- return 0;
+  return 0;
 }
  /*END CVODE*/
  static int states (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) { {
@@ -478,4 +491,74 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms/modfiles/cadyn.mod";
+static const char* nmodl_file_text = 
+  ":High-voltage activated Ca2+ channel\n"
+  "\n"
+  "NEURON {\n"
+  "        SUFFIX cadyn\n"
+  "	USEION ca READ eca WRITE ica\n"
+  "	RANGE gca, i, gcabar\n"
+  "	RANGE uinf, zinf, utau, ztau \n"
+  "}\n"
+  "\n"
+  "UNITS {\n"
+  "        (mA) = (milliamp)\n"
+  "	(mV) = (millivolt)\n"
+  "}\n"
+  "\n"
+  "PARAMETER {\n"
+  "	gcabar = 0.0001 (mho/cm2) <0,1e9>\n"
+  "}\n"
+  "\n"
+  "STATE { u z }\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	v (mV)\n"
+  "	eca (mV)\n"
+  "	ica (mA/cm2)\n"
+  "	i   (mA/cm2)\n"
+  "	uinf\n"
+  "	zinf \n"
+  "	utau (ms)\n"
+  "	ztau (ms)\n"
+  "	gca (mho/cm2)\n"
+  "}\n"
+  "\n"
+  "BREAKPOINT { \n"
+  "	SOLVE states METHOD cnexp\n"
+  "	gca = gcabar*u*u*z\n"
+  "	ica = gca*(v-eca)\n"
+  "	i = ica\n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	rate(v)\n"
+  "	u = uinf\n"
+  "	z = zinf\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE states {\n"
+  "	rate(v)\n"
+  "	u' = (uinf-u)/utau\n"
+  "	z' = (zinf-z)/ztau\n"
+  "}\n"
+  "\n"
+  "PROCEDURE rate(v(mV)) {\n"
+  "	UNITSOFF\n"
+  "	if (v < -57.5 ) {                       :::::::::::::::::  -57.5\n"
+  "	uinf = 0\n"
+  "	} else{\n"
+  "	uinf = 1/(exp(-(v+30)/11)+1)      :::::::::::::::::\n"
+  "	}\n"
+  "	utau = 1.25*2/(exp(-0.031*(v+37.1)) + exp(0.031*(v+37.1)))\n"
+  "\n"
+  "	zinf = 1/(exp((v+12.6)/18.9)+1)\n"
+  "	ztau = 420	\n"
+  "	UNITSON	\n"
+  "}\n"
+  ;
 #endif

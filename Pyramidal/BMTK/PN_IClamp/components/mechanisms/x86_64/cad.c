@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -79,6 +79,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -141,7 +150,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "cad",
  0,
  0,
@@ -198,6 +207,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
      _nrn_thread_reg(_mechtype, 1, _thread_mem_init);
      _nrn_thread_reg(_mechtype, 0, _thread_cleanup);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 7, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "ca_ion");
@@ -250,7 +263,8 @@ static int _ode_spec1(_threadargsproto_);
    drive_channel = 0. ;
    }
  Dca = Dca  / (1. - dt*( ( ( ( - 1.0 ) ) ) / taur )) ;
- return 0;
+ cai = ca ;
+  return 0;
 }
  /*END CVODE*/
  
@@ -492,4 +506,97 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms/modfiles/cad.mod";
+static const char* nmodl_file_text = 
+  "TITLE decay of internal calcium concentration\n"
+  ":\n"
+  ": Internal calcium concentration due to calcium currents and pump.\n"
+  ": Differential equations.\n"
+  ":\n"
+  ": Simple model of ATPase pump with 3 kinetic constants (Destexhe 92)\n"
+  ":     Cai + P <-> CaP -> Cao + P  (k1,k2,k3)\n"
+  ": A Michaelis-Menten approximation is assumed, which reduces the complexity\n"
+  ": of the system to 2 parameters: \n"
+  ":       kt = <tot enzyme concentration> * k3  -> TIME CONSTANT OF THE PUMP\n"
+  ":	kd = k2/k1 (dissociation constant)    -> EQUILIBRIUM CALCIUM VALUE\n"
+  ": The values of these parameters are chosen assuming a high affinity of \n"
+  ": the pump to calcium and a low transport capacity (cfr. Blaustein, \n"
+  ": TINS, 11: 438, 1988, and references therein).  \n"
+  ":\n"
+  ": Units checked using \"modlunit\" -> factor 10000 needed in ca entry\n"
+  ":\n"
+  ": VERSION OF PUMP + DECAY (decay can be viewed as simplified buffering)\n"
+  ":\n"
+  ": All variables are range variables\n"
+  ":\n"
+  ":\n"
+  ": This mechanism was published in:  Destexhe, A. Babloyantz, A. and \n"
+  ": Sejnowski, TJ.  Ionic mechanisms for intrinsic slow oscillations in\n"
+  ": thalamic relay neurons. Biophys. J. 65: 1538-1552, 1993)\n"
+  ":\n"
+  ": Written by Alain Destexhe, Salk Institute, Nov 12, 1992\n"
+  ":\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX cad\n"
+  "	USEION ca READ ica, cai WRITE cai\n"
+  "	RANGE ca\n"
+  "	GLOBAL depth,cainf,taur\n"
+  "}\n"
+  "\n"
+  "UNITS {\n"
+  "	(molar) = (1/liter)			: moles do not appear in units\n"
+  "	(mM)	= (millimolar)\n"
+  "	(um)	= (micron)\n"
+  "	(mA)	= (milliamp)\n"
+  "	(msM)	= (ms mM)\n"
+  "	FARADAY = (faraday) (coulomb)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "PARAMETER {\n"
+  "	depth	= .1	(um)		: depth of shell\n"
+  "	taur	= 200	(ms)		: rate of calcium removal\n"
+  "	cainf	= 100e-6(mM)\n"
+  "	cai		(mM)\n"
+  "}\n"
+  "\n"
+  "STATE {\n"
+  "	ca		(mM) \n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	ca = cainf\n"
+  "}\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	ica		(mA/cm2)\n"
+  "	drive_channel	(mM/ms)\n"
+  "}\n"
+  "	\n"
+  "BREAKPOINT {\n"
+  "	SOLVE state METHOD derivimplicit\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE state { \n"
+  "\n"
+  "	drive_channel =  - (10000) * ica / (2 * FARADAY * depth)\n"
+  "	if (drive_channel <= 0.) { drive_channel = 0. }	: cannot pump inward\n"
+  "\n"
+  "	ca' = drive_channel + (cainf-ca)/taur\n"
+  "	cai = ca\n"
+  "}\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  ;
 #endif

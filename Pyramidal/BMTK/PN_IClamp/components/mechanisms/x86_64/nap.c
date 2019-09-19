@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -85,6 +85,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -147,7 +156,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "nap",
  "gbar_nap",
  0,
@@ -203,6 +212,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 11, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "na_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "na_ion");
@@ -239,7 +252,7 @@ static int _ode_spec1(_threadargsproto_);
  static int _ode_matsol1 (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) {
  rate ( _threadargscomma_ v ) ;
  Dm = Dm  / (1. - dt*( ( ( ( - 1.0 ) ) ) / mtau )) ;
- return 0;
+  return 0;
 }
  /*END CVODE*/
  static int states (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) { {
@@ -474,4 +487,78 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms/modfiles/nap.mod";
+static const char* nmodl_file_text = 
+  "TITLE Sodium persistent current for RD Traub, J Neurophysiol 89:909-921, 2003\n"
+  "\n"
+  "COMMENT\n"
+  "\n"
+  "	Implemented by Maciej Lazarewicz 2003 (mlazarew@seas.upenn.edu)\n"
+  "\n"
+  "ENDCOMMENT\n"
+  "\n"
+  "INDEPENDENT { t FROM 0 TO 1 WITH 1 (ms) }\n"
+  "\n"
+  "UNITS { \n"
+  "	(mV) = (millivolt) \n"
+  "	(mA) = (milliamp) \n"
+  "} \n"
+  "NEURON { \n"
+  "	SUFFIX nap\n"
+  "	USEION na READ ena WRITE ina\n"
+  "	RANGE i, minf, mtau, gnap, gbar :, vhalf, k\n"
+  "}\n"
+  "\n"
+  "PARAMETER { \n"
+  "	gbar = 1e-4 	(mho/cm2)\n"
+  "	v ena 		(mV)  \n"
+  "	k = 5      (mV)\n"
+  "	vhalf = -48 (mV)\n"
+  "} \n"
+  "ASSIGNED { \n"
+  "	ina 		(mA/cm2) \n"
+  "	i   		(mA/cm2)\n"
+  "	minf 		(1)\n"
+  "	mtau 		(ms) \n"
+  "	gnap		(mho/cm2)\n"
+  "} \n"
+  "STATE {\n"
+  "	m\n"
+  "}\n"
+  "\n"
+  "BREAKPOINT { \n"
+  "	SOLVE states METHOD cnexp\n"
+  "	gnap = gbar * m\n"
+  "	ina = gnap * ( v - ena ) \n"
+  "	i = ina\n"
+  "} \n"
+  "\n"
+  "INITIAL { \n"
+  "	rate(v)\n"
+  "	m = minf\n"
+  "} \n"
+  "\n"
+  "DERIVATIVE states { \n"
+  "	rate(v)\n"
+  "	m' = ( minf - m ) / mtau \n"
+  "}\n"
+  "UNITSOFF\n"
+  " \n"
+  "PROCEDURE rate(v (mV)) {\n"
+  "	if (v < -67.5 ) {\n"
+  "	minf = 0\n"
+  "	} else{\n"
+  "	minf  = 1 / ( 1 + exp( ( vhalf - v ) / k ) )\n"
+  "	}\n"
+  "	if( v < -40.0 ) {\n"
+  "		mtau = 100*(0.025 + 0.14 * exp( ( v + 40 ) / 10 ))\n"
+  "	}else{\n"
+  "		mtau = 100*(0.02 + 0.145 * exp( ( - v - 40 ) / 10 ))\n"
+  "	}\n"
+  "}\n"
+  "UNITSON\n"
+  ;
 #endif

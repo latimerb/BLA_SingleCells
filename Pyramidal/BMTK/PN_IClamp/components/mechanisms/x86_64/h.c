@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -83,6 +83,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -173,7 +182,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "hd",
  "ghdbar_hd",
  0,
@@ -219,6 +228,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  	register_mech(_mechanism, nrn_alloc,nrn_cur, nrn_jacob, nrn_state, nrn_init, hoc_nrnpointerindex, 1);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 9, 1);
   hoc_register_dparam_semantics(_mechtype, 0, "cvodeieq");
  	hoc_register_cvode(_mechtype, _ode_count, _ode_map, _ode_spec, _ode_matsol);
@@ -286,7 +299,7 @@ static void _hoc_bett(void) {
  static int _ode_matsol1 (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) {
  rate ( _threadargscomma_ v ) ;
  Dl = Dl  / (1. - dt*( ( ( ( - 1.0 ) ) ) / taul )) ;
- return 0;
+  return 0;
 }
  /*END CVODE*/
  static int states (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) { {
@@ -503,4 +516,104 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms/modfiles/h.mod";
+static const char* nmodl_file_text = 
+  "TITLE I-h channel from Magee 1998 for distal dendrites\n"
+  "\n"
+  "UNITS {\n"
+  "	(mA) = (milliamp)\n"
+  "	(mV) = (millivolt)\n"
+  "\n"
+  "}\n"
+  "\n"
+  "PARAMETER {\n"
+  "	v 		(mV)\n"
+  "        ehd  		(mV)        \n"
+  "	celsius 	(degC)\n"
+  "	ghdbar=.0001 	(mho/cm2)\n"
+  "        vhalfl=-81   	(mV)\n"
+  "	kl=-8\n"
+  "        vhalft=-75   	(mV)\n"
+  "        a0t=0.011      	(/ms)\n"
+  "        zetat=2.2    	(1)\n"
+  "        gmt=.4   	(1)\n"
+  "	q10=4.5\n"
+  "	qtl=1\n"
+  "}\n"
+  "\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX hd\n"
+  "	NONSPECIFIC_CURRENT i\n"
+  "        RANGE ghd, i, ghdbar :, vhalfl\n"
+  "        RANGE linf,taul\n"
+  "}\n"
+  "\n"
+  "STATE {\n"
+  "        l\n"
+  "}\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	i (mA/cm2)\n"
+  "        linf      \n"
+  "        taul\n"
+  "        ghd\n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	rate(v)\n"
+  "	l=linf\n"
+  "}\n"
+  "\n"
+  "\n"
+  "BREAKPOINT {\n"
+  "	SOLVE states METHOD cnexp\n"
+  "	ghd = ghdbar*l\n"
+  "	i = ghd*(v-ehd)\n"
+  "\n"
+  "}\n"
+  "\n"
+  "\n"
+  "FUNCTION alpt(v(mV)) {\n"
+  "  alpt = exp(0.0378*zetat*(v-vhalft)) \n"
+  "}\n"
+  "\n"
+  "FUNCTION bett(v(mV)) {\n"
+  "  bett = exp(0.0378*zetat*gmt*(v-vhalft)) \n"
+  "}\n"
+  "\n"
+  "DERIVATIVE states {     : exact when v held constant; integrates over dt step\n"
+  "        rate(v)\n"
+  "        l' =  (linf - l)/taul\n"
+  "}\n"
+  "\n"
+  "PROCEDURE rate(v (mV)) { :callable from hoc\n"
+  "        LOCAL a,qt\n"
+  "        qt=q10^((celsius-33)/10)\n"
+  "        a = alpt(v)\n"
+  "		if (v > -62.5 ) {\n"
+  "		linf = 0\n"
+  "		} else{\n"
+  "        linf = 1/(1 + exp(-(v-vhalfl)/kl))\n"
+  "		}\n"
+  "        taul = bett(v)/(qtl*qt*a0t*(1+a))\n"
+  "}\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  "\n"
+  ;
 #endif

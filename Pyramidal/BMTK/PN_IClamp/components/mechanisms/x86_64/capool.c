@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -83,6 +83,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -144,7 +153,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "capool",
  "taucas_capool",
  "cainf_capool",
@@ -205,6 +214,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 11, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "cas_ion");
@@ -241,7 +254,8 @@ static int _ode_spec1(_threadargsproto_);
 }
  static int _ode_matsol1 (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) {
  Dcasi = Dcasi  / (1. - dt*( ( ( ( - 1.0 ) ) ) / taucas )) ;
- return 0;
+ xx = casi ;
+  return 0;
 }
  /*END CVODE*/
  static int states (double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) { {
@@ -441,4 +455,59 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/PN_IClamp/components/mechanisms/modfiles/capool.mod";
+static const char* nmodl_file_text = 
+  ": Two Ca2+ pools for ic and isAHP\n"
+  "\n"
+  "NEURON {\n"
+  "    SUFFIX capool\n"
+  "	USEION ca READ ica\n"
+  "	USEION cas READ casi WRITE casi VALENCE 2 \n"
+  "	RANGE fcas, taucas, cainf,xx\n"
+  "}\n"
+  "\n"
+  "UNITS {\n"
+  "        (mM) = (milli/liter)\n"
+  "        (mA) = (milliamp)\n"
+  "	(mV) = (millivolt)\n"
+  "	FARADAY = 96485.309 (coul)\n"
+  "}\n"
+  "\n"
+  "PARAMETER {\n"
+  "	pi = 3.14159265\n"
+  "	taucas= 1000 (ms) 	: decay time constant\n"
+  "    cainf= 50e-6   (mM)  	: equilibrium ca2+ concentration\n"
+  "	fcas = 0.024\n"
+  "    w = 1 (micrometer)     	: thickness of shell for ca2+ diffusion\n"
+  "	z = 2			: valence\n"
+  "}\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	v (mV)\n"
+  "	ica (mA/cm2)\n"
+  "    A       (mM-cm2/ms/mA)\n"
+  "}\n"
+  "\n"
+  "STATE { casi(mM) xx}\n"
+  "\n"
+  "BREAKPOINT { \n"
+  "	SOLVE states METHOD cnexp\n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	A = 1/(z*FARADAY*w)*(1e4)\n"
+  "	casi = cainf\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE states {\n"
+  "	casi'= -fcas*A*ica + (cainf - casi)/taucas\n"
+  "	xx=casi\n"
+  "}\n"
+  "\n"
+  "\n"
+  "\n"
+  ;
 #endif
