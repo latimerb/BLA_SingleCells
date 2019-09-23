@@ -1,0 +1,60 @@
+{
+  "target_simulator": "NEURON",
+  "run": {
+    "tstart": 0.0,
+    "tstop": 2000.0,
+    "dt": 0.1,
+    "dL": 20.0,
+    "spike_threshold": -15.0,
+    "nsteps_block": 5000
+  },
+  "conditions": {
+    "celsius": 34.0,
+    "v_init": -80.0
+  },
+  "inputs": {
+    "current_clamp": {
+      "input_type": "current_clamp",
+      "module": "IClamp",
+      "node_set": "all",
+      "amp": 0.03,
+      "delay": 500.0,
+      "duration": 1000.0
+    }
+  },
+  "output": {
+    "log_file": "log.txt",
+    "output_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/output",
+    "spikes_file": "spikes.h5"
+  },
+  "reports": {
+    "v_report": {
+      "variable_name": "v",
+      "cells": "all",
+      "module": "membrane_report",
+      "sections": "soma"
+    }
+  },
+  "node_sets_file": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/node_sets.json",
+  "network": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/circuit_config.json",
+  "config_path": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/simulation_config.json",
+  "config_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp",
+  "components": {
+    "biophysical_neuron_models_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/biophysical_neuron_models",
+    "__pycache___dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/__pycache__",
+    "point_neuron_models_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/point_neuron_models",
+    "templates_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/templates",
+    "synaptic_models_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/synaptic_models",
+    "morphologies_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/morphologies",
+    "mechanisms_dir": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/CHN_IClamp/components/mechanisms"
+  },
+  "networks": {
+    "nodes": [
+      {
+        "node_types_file": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/network/mcortex_node_types.csv",
+        "nodes_file": "/home/mizzou/BLA_SingleCells/Chandelier/BMTK/network/mcortex_nodes.h5"
+      }
+    ],
+    "edges": []
+  }
+}
