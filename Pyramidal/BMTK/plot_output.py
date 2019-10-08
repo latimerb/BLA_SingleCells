@@ -19,7 +19,6 @@ raster_file = './PN_IClamp/output/spikes.h5'
 # load 
 f = h5py.File(mem_pot_file,'r')
 
-
 mem_potential = f['report']['mcortex']['data']
 plt.plot(mem_potential)
 

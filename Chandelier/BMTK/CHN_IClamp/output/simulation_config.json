@@ -17,7 +17,7 @@
       "input_type": "current_clamp",
       "module": "IClamp",
       "node_set": "all",
-      "amp": 0.03,
+      "amp": 0.009,
       "delay": 500.0,
       "duration": 1000.0
     }
