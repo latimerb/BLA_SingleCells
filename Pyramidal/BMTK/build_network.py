@@ -1,7 +1,7 @@
 from bmtk.builder.networks import NetworkBuilder
 
 net = NetworkBuilder('mcortex')
-net.add_nodes(N=10,cell_name='Scnn1a_473845048',
+net.add_nodes(N=3,cell_name='Scnn1a_473845048',
               potental='exc',
               model_type='biophysical',
               model_template='hoc:stylized_typeC',
@@ -22,9 +22,10 @@ build_env_bionet(base_dir='PN_IClamp',      # Where to save the scripts and conf
                  tstop=2000.0, dt=0.1,     # Run a simulation for 2000 ms at 0.1 ms intervals
                  report_vars=['v'], # Tells simulator we want to record membrane potential and calcium traces
                  current_clamp={           # Creates a step current from 500.ms to 1500.0 ms  
-                     'amp': 0.009,
+                     'amp': [0.2,0.3,0.4],
                      'delay': 500.0,
-                     'duration': 1000.0
+                     'duration': 1000.0,
+                     'gids':[0,1,2]
                  },
                  compile_mechanisms=True   # Will try to compile NEURON mechanisms
                 )
