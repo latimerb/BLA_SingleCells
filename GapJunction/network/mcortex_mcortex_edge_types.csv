@@ -1,0 +1,2 @@
+edge_type_id target_query source_query delay dynamics_params target_sections model_template syn_weight distance_range
+100 cell_name=='cell2' cell_name=='cell1' 0.0 gap.json ['soma'] GAP 1 "[0, 999]"
