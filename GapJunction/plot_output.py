@@ -12,8 +12,8 @@ from scipy.signal import welch
 # Load data
 config_file = "simulation_config.json"
 #lfp_file = "./output/ecp.h5"
-mem_pot_file = './PN_IClamp/output/v_report.h5'
-raster_file = './PN_IClamp/output/spikes.h5'
+mem_pot_file = './GAP_IClamp/output/v_report.h5'
+raster_file = './GAP_IClamp/output/spikes.h5'
 
 
 # load 

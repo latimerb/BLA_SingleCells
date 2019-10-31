@@ -38,19 +38,19 @@ def inhsyn(syn_params, xs, secs):
     return syns
 
 def GAP(syn_params, sec_x, sec_id):
-    gap_syn = h.GAP(sec_x, sec=sec_id)
+    #gap_syn = h.GAP(sec_x, sec=sec_id)
     #import pdb
     #pdb.set_trace()    
-    if syn_params.get('setpointer'):
-        target_var_name = syn_params['setpointer']
-        target_var = eval("gap_syn._ref_{}".format(target_var_name))
-        pc.target_var(target_var, GAPCounter.i)
-    if syn_params.get('r'):
-        gap_syn.r = syn_params['r']
+    #if syn_params.get('setpointer'):
+    #    target_var_name = syn_params['setpointer']
+    #    target_var = eval("gap_syn._ref_{}".format(target_var_name))
+    #    pc.target_var(target_var, GAPCounter.i)
+    #if syn_params.get('r'):
+    #    gap_syn.r = syn_params['r']
 
-    target_gid = GAPCounter.i
-    GAPCounter.i = GAPCounter.i + 1 
-    return gap_syn, target_gid
+    #target_gid = GAPCounter.i
+    #GAPCounter.i = GAPCounter.i + 1 
+    return #gap_syn, target_gid
 
 def gap(syn_params, xs, secs):
     syns = []

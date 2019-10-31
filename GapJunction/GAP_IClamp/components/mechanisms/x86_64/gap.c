@@ -1,6 +1,6 @@
 /* Created by Language version: 7.7.0 */
-/* NOT VECTORIZED */
-#define NRN_VECTORIZED 0
+/* VECTORIZED */
+#define NRN_VECTORIZED 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -22,33 +22,33 @@ extern int _method3;
 extern double hoc_Exp(double);
 #endif
  
-#define nrn_init _nrn_init__GAP
-#define _nrn_initial _nrn_initial__GAP
-#define nrn_cur _nrn_cur__GAP
-#define _nrn_current _nrn_current__GAP
-#define nrn_jacob _nrn_jacob__GAP
-#define nrn_state _nrn_state__GAP
-#define _net_receive _net_receive__GAP 
+#define nrn_init _nrn_init__Gap
+#define _nrn_initial _nrn_initial__Gap
+#define nrn_cur _nrn_cur__Gap
+#define _nrn_current _nrn_current__Gap
+#define nrn_jacob _nrn_jacob__Gap
+#define nrn_state _nrn_state__Gap
+#define _net_receive _net_receive__Gap 
  
-#define _threadargscomma_ /**/
-#define _threadargsprotocomma_ /**/
-#define _threadargs_ /**/
-#define _threadargsproto_ /**/
+#define _threadargscomma_ _p, _ppvar, _thread, _nt,
+#define _threadargsprotocomma_ double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt,
+#define _threadargs_ _p, _ppvar, _thread, _nt
+#define _threadargsproto_ double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt
  	/*SUPPRESS 761*/
 	/*SUPPRESS 762*/
 	/*SUPPRESS 763*/
 	/*SUPPRESS 765*/
 	 extern double *getarg();
- static double *_p; static Datum *_ppvar;
+ /* Thread safe. No static _p or _ppvar. */
  
-#define t nrn_threads->_t
-#define dt nrn_threads->_dt
-#define r _p[0]
-#define i _p[1]
-#define _g _p[2]
+#define t _nt->_t
+#define dt _nt->_dt
+#define g _p[0]
+#define vgap _p[1]
+#define i _p[2]
+#define v _p[3]
+#define _g _p[4]
 #define _nd_area  *_ppvar[0]._pval
-#define vgap	*_ppvar[2]._pval
-#define _p_vgap	_ppvar[2]._pval
  
 #if MAC
 #if !defined(v)
@@ -62,7 +62,9 @@ extern double hoc_Exp(double);
 #if defined(__cplusplus)
 extern "C" {
 #endif
- static int hoc_nrnpointerindex =  2;
+ static int hoc_nrnpointerindex =  -1;
+ static Datum* _extcall_thread;
+ static Prop* _extcall_prop;
  /* external NEURON variables */
  /* declaration of user functions */
  static int _mechtype;
@@ -98,7 +100,7 @@ extern void hoc_reg_nmodl_filename(int, const char*);
 }
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
- _p = _prop->param; _ppvar = _prop->dparam;
+ _extcall_prop = _prop;
  }
  static void _hoc_setdata(void* _vptr) { Prop* _prop;
  _prop = ((Point_process*)_vptr)->_prop;
@@ -120,12 +122,11 @@ extern void hoc_reg_nmodl_filename(int, const char*);
  0,0,0
 };
  static HocParmUnits _hoc_parm_units[] = {
- "r", "megaohm",
- "i", "nanoamp",
+ "g", "nanosiemens",
  "vgap", "millivolt",
+ "i", "nanoamp",
  0,0
 };
- static double v = 0;
  /* connect global user variables to hoc */
  static DoubScal hoc_scdoub[] = {
  0,0
@@ -145,13 +146,13 @@ static void  nrn_jacob(_NrnThread*, _Memb_list*, int);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
  "7.7.0",
-"GAP",
- "r",
+"Gap",
+ "g",
  0,
+ "vgap",
  "i",
  0,
  0,
- "vgap",
  0};
  
 extern Prop* need_memb(Symbol*);
@@ -164,14 +165,14 @@ static void nrn_alloc(Prop* _prop) {
 	_p = nrn_point_prop_->param;
 	_ppvar = nrn_point_prop_->dparam;
  }else{
- 	_p = nrn_prop_data_alloc(_mechtype, 3, _prop);
+ 	_p = nrn_prop_data_alloc(_mechtype, 5, _prop);
  	/*initialize range parameters*/
- 	r = 1e+10;
+ 	g = 1;
   }
  	_prop->param = _p;
- 	_prop->param_size = 3;
+ 	_prop->param_size = 5;
   if (!nrn_point_prop_) {
- 	_ppvar = nrn_prop_datum_alloc(_mechtype, 3, _prop);
+ 	_ppvar = nrn_prop_datum_alloc(_mechtype, 2, _prop);
   }
  	_prop->dparam = _ppvar;
  	/*connect ionic variables to this model*/
@@ -185,11 +186,11 @@ extern void hoc_register_tolerance(int, HocStateTolerance*, Symbol***);
 extern void _cvode_abstol( Symbol**, double*, int);
 
  void _gap_reg() {
-	int _vectorized = 0;
+	int _vectorized = 1;
   _initlists();
  	_pointtype = point_register_mech(_mechanism,
 	 nrn_alloc,nrn_cur, nrn_jacob, nrn_state, nrn_init,
-	 hoc_nrnpointerindex, 0,
+	 hoc_nrnpointerindex, 1,
 	 _hoc_create_pnt, _hoc_destroy_pnt, _member_func);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
@@ -197,12 +198,11 @@ extern void _cvode_abstol( Symbol**, double*, int);
   hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
   hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
 #endif
-  hoc_register_prop_size(_mechtype, 3, 3);
+  hoc_register_prop_size(_mechtype, 5, 2);
   hoc_register_dparam_semantics(_mechtype, 0, "area");
   hoc_register_dparam_semantics(_mechtype, 1, "pntproc");
-  hoc_register_dparam_semantics(_mechtype, 2, "pointer");
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 GAP /home/mizzou/BLA_SingleCells/GapJunction/PN_IClamp/components/mechanisms/x86_64/gap.mod\n");
+ 	ivoc_help("help ?1 Gap /home/mizzou/BLA_SingleCells/GapJunction/PN_IClamp/components/mechanisms/x86_64/gap.mod\n");
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
@@ -214,21 +214,29 @@ static int _ninits = 0;
 static int _match_recurse=1;
 static void _modl_cleanup(){ _match_recurse=1;}
 
-static void initmodel() {
-  int _i; double _save;_ninits++;
-{
+static void initmodel(double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt) {
+  int _i; double _save;{
 
 }
 }
 
 static void nrn_init(_NrnThread* _nt, _Memb_list* _ml, int _type){
+double* _p; Datum* _ppvar; Datum* _thread;
 Node *_nd; double _v; int* _ni; int _iml, _cntml;
 #if CACHEVEC
     _ni = _ml->_nodeindices;
 #endif
 _cntml = _ml->_nodecount;
+_thread = _ml->_thread;
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _p = _ml->_data[_iml]; _ppvar = _ml->_pdata[_iml];
+#if EXTRACELLULAR
+ _nd = _ml->_nodelist[_iml];
+ if (_nd->_extnode) {
+    _v = NODEV(_nd) +_nd->_extnode->_v[0];
+ }else
+#endif
+ {
 #if CACHEVEC
   if (use_cachevec) {
     _v = VEC_V(_ni[_iml]);
@@ -238,27 +246,37 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
     _nd = _ml->_nodelist[_iml];
     _v = NODEV(_nd);
   }
+ }
  v = _v;
- initmodel();
-}}
+ initmodel(_p, _ppvar, _thread, _nt);
+}
+}
 
-static double _nrn_current(double _v){double _current=0.;v=_v;{ {
-   i = ( v - vgap ) / r ;
-   printf ( "Current: %g, Voltage: %g, VGAP: %g" , i , v , vgap ) ;
+static double _nrn_current(double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt, double _v){double _current=0.;v=_v;{ {
+   i = g * ( vgap - v ) ;
    }
  _current += i;
 
 } return _current;
 }
 
-static void nrn_cur(_NrnThread* _nt, _Memb_list* _ml, int _type){
+static void nrn_cur(_NrnThread* _nt, _Memb_list* _ml, int _type) {
+double* _p; Datum* _ppvar; Datum* _thread;
 Node *_nd; int* _ni; double _rhs, _v; int _iml, _cntml;
 #if CACHEVEC
     _ni = _ml->_nodeindices;
 #endif
 _cntml = _ml->_nodecount;
+_thread = _ml->_thread;
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _p = _ml->_data[_iml]; _ppvar = _ml->_pdata[_iml];
+#if EXTRACELLULAR
+ _nd = _ml->_nodelist[_iml];
+ if (_nd->_extnode) {
+    _v = NODEV(_nd) +_nd->_extnode->_v[0];
+ }else
+#endif
+ {
 #if CACHEVEC
   if (use_cachevec) {
     _v = VEC_V(_ni[_iml]);
@@ -268,79 +286,100 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
     _nd = _ml->_nodelist[_iml];
     _v = NODEV(_nd);
   }
- _g = _nrn_current(_v + .001);
- 	{ _rhs = _nrn_current(_v);
+ }
+ _g = _nrn_current(_p, _ppvar, _thread, _nt, _v + .001);
+ 	{ _rhs = _nrn_current(_p, _ppvar, _thread, _nt, _v);
  	}
  _g = (_g - _rhs)/.001;
  _g *=  1.e2/(_nd_area);
  _rhs *= 1.e2/(_nd_area);
 #if CACHEVEC
   if (use_cachevec) {
-	VEC_RHS(_ni[_iml]) -= _rhs;
+	VEC_RHS(_ni[_iml]) += _rhs;
   }else
 #endif
   {
-	NODERHS(_nd) -= _rhs;
+	NODERHS(_nd) += _rhs;
   }
+  if (_nt->_nrn_fast_imem) { _nt->_nrn_fast_imem->_nrn_sav_rhs[_ni[_iml]] += _rhs; }
+#if EXTRACELLULAR
+ if (_nd->_extnode) {
+   *_nd->_extnode->_rhs[0] += _rhs;
+ }
+#endif
  
-}}
+}
+ 
+}
 
-static void nrn_jacob(_NrnThread* _nt, _Memb_list* _ml, int _type){
+static void nrn_jacob(_NrnThread* _nt, _Memb_list* _ml, int _type) {
+double* _p; Datum* _ppvar; Datum* _thread;
 Node *_nd; int* _ni; int _iml, _cntml;
 #if CACHEVEC
     _ni = _ml->_nodeindices;
 #endif
 _cntml = _ml->_nodecount;
+_thread = _ml->_thread;
 for (_iml = 0; _iml < _cntml; ++_iml) {
  _p = _ml->_data[_iml];
+ _nd = _ml->_nodelist[_iml];
 #if CACHEVEC
   if (use_cachevec) {
-	VEC_D(_ni[_iml]) += _g;
+	VEC_D(_ni[_iml]) -= _g;
   }else
 #endif
   {
-     _nd = _ml->_nodelist[_iml];
-	NODED(_nd) += _g;
+	NODED(_nd) -= _g;
   }
+  if (_nt->_nrn_fast_imem) { _nt->_nrn_fast_imem->_nrn_sav_d[_ni[_iml]] -= _g; }
+#if EXTRACELLULAR
+ if (_nd->_extnode) {
+   *_nd->_extnode->_d[0] += _g;
+ }
+#endif
  
-}}
+}
+ 
+}
 
-static void nrn_state(_NrnThread* _nt, _Memb_list* _ml, int _type){
+static void nrn_state(_NrnThread* _nt, _Memb_list* _ml, int _type) {
 
 }
 
 static void terminal(){}
 
-static void _initlists() {
+static void _initlists(){
+ double _x; double* _p = &_x;
  int _i; static int _first = 1;
   if (!_first) return;
 _first = 0;
 }
 
+#if defined(__cplusplus)
+} /* extern "C" */
+#endif
+
 #if NMODL_TEXT
 static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/GapJunction/PN_IClamp/components/mechanisms/modfiles/gap.mod";
 static const char* nmodl_file_text = 
   "NEURON {\n"
-  "  POINT_PROCESS GAP\n"
-  "  NONSPECIFIC_CURRENT i\n"
-  "  POINTER vgap\n"
-  "  RANGE r,i \n"
+  "  POINT_PROCESS Gap\n"
+  "  ELECTRODE_CURRENT i\n"
+  "  RANGE g, i, vgap\n"
   "}\n"
   "\n"
-  "\n"
-  "\n"
-  "PARAMETER { r = 1e10 (megaohm)}\n"
+  "PARAMETER {\n"
+  "  g = 1 (nanosiemens)\n"
+  "}\n"
   "\n"
   "ASSIGNED {\n"
-  "v    (millivolt)\n"
-  "vgap (millivolt)\n"
-  "i    (nanoamp)\n"
-  "  }\n"
-  "\n"
-  "BREAKPOINT {\n"
-  "i = (v-vgap)/r\n"
-  "printf(\"Current: %g, Voltage: %g, VGAP: %g\",i,v,vgap)\n"
+  "  v (millivolt)\n"
+  "  vgap (millivolt)\n"
+  "  i (nanoamp)\n"
   "}\n"
   "\n"
+  "BREAKPOINT {\n"
+  "  i = g * (vgap - v)\n"
+  "}\n"
   ;
 #endif
