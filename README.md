@@ -1,9 +1,9 @@
 # BLA_SingleCells
 
-The Allen Institute's BMTK version is not currently updated (as of 10/31/2019) to run this code. Clone this one:
+Get BMTK from the Allen Institute's GitHub:
 
 ```bash
-git clone https://github.com/latimerb/bmtk
+git clone https://github.com/alleninstitute/bmtk
 ```
 
 and install
