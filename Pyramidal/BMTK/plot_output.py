@@ -20,9 +20,10 @@ raster_file = './PN_IClamp/output/spikes.h5'
 i = h5py.File(mem_pot_file,'r')
 r = h5py.File(raster_file,'r')
 
-pdb.set_trace()
 
-mem_potential = f['report']['mcortex']['data']
+mem_potential = i['report']['mcortex']['data']
+
+pdb.set_trace()
 
 plt.plot(mem_potential)
 

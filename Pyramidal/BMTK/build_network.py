@@ -1,10 +1,10 @@
 from bmtk.builder.networks import NetworkBuilder
 
 net = NetworkBuilder('mcortex')
-net.add_nodes(N=3,cell_name='Scnn1a_473845048',
+net.add_nodes(N=1,cell_name='PN',
               potental='exc',
               model_type='biophysical',
-              model_template='hoc:stylized_typeC',
+              model_template='hoc:detailedpyrtypeC',
               morphology=None
               )
 
