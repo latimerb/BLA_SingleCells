@@ -154,7 +154,7 @@ proc ConnectCClamp(){
 	$o1.soma ccl[$2] = new IClamp(.5)
 	ccl[$2].del = 500
 	ccl[$2].dur = 1000
-	ccl[$2].amp = -0.05
+	ccl[$2].amp = 0.05
 }
 
 
@@ -163,11 +163,11 @@ proc ConnectNetStimtoAISsegs(){ local i
 objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 
 // Make netstim to provide spikes
-	for i=0,0{
+	for i=0,10{
 		stim[i] = new NetStim()
 		stim[i].interval = 6 //(ms)
 		stim[i].number = 1
-		stim[i].start = 1500+150*i //(ms)
+		stim[i].start = 1000+150*i //(ms)
 		stim[i].noise = 0
 		
 		$o1.axon[9] Chn2PyrSyn[i]= new MyExp2Sid(0.5)

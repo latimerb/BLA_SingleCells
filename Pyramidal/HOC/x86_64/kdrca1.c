@@ -1,4 +1,4 @@
-/* Created by Language version: 7.5.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -88,6 +88,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -167,7 +176,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "7.5.0",
+ "7.7.0",
 "kdr",
  "gbar_kdr",
  0,
@@ -223,6 +232,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 11, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "k_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "k_ion");
@@ -231,7 +244,7 @@ extern void _cvode_abstol( Symbol**, double*, int);
  	hoc_register_cvode(_mechtype, _ode_count, _ode_map, _ode_spec, _ode_matsol);
  	hoc_register_tolerance(_mechtype, _hoc_state_tol, &_atollist);
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 kdr /home/ben/BLA_SingleCells/Pyramidal/x86_64/kdrca1.mod\n");
+ 	ivoc_help("help ?1 kdr /home/mizzou/BLA_SingleCells/Pyramidal/HOC/x86_64/kdrca1.mod\n");
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
@@ -528,4 +541,95 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/mizzou/BLA_SingleCells/Pyramidal/HOC/kdrca1.mod";
+static const char* nmodl_file_text = 
+  "TITLE K-DR channel\n"
+  ": from Klee Ficker and Heinemann\n"
+  ": modified to account for Dax et al.\n"
+  ": M.Migliore 1997\n"
+  "\n"
+  "UNITS {\n"
+  "	(mA) = (milliamp)\n"
+  "	(mV) = (millivolt)\n"
+  "\n"
+  "}\n"
+  "\n"
+  "PARAMETER {\n"
+  "\n"
+  "	v (mV)\n"
+  "        ek (mV)		: must be explicitely def. in hoc\n"
+  "	celsius		(degC)\n"
+  "	gbar=.003 (mho/cm2)\n"
+  "        vhalfn = -15: 13 : -25  : -20  (mV)\n"
+  "        a0n=0.02      (/ms)\n"
+  "        zetan=-3    (1)\n"
+  "        gmn=0.7  (1)\n"
+  "	nmax=2  (1)\n"
+  "	qt=1\n"
+  "}\n"
+  "\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX kdr\n"
+  "	USEION k READ ek WRITE ik\n"
+  "        RANGE gkdr, i, gbar\n"
+  "	RANGE ninf,taun\n"
+  "}\n"
+  "\n"
+  "STATE {\n"
+  "	n\n"
+  "}\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	ik (mA/cm2)\n"
+  "	i  (mA/cm2)\n"
+  "        ninf\n"
+  "        gkdr\n"
+  "        taun\n"
+  "}\n"
+  "\n"
+  "BREAKPOINT {\n"
+  "	SOLVE states METHOD cnexp\n"
+  "	gkdr = gbar*n\n"
+  "	ik = gkdr*(v-ek)\n"
+  "	i = ik\n"
+  "\n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	rates(v)\n"
+  "	n=ninf\n"
+  "}\n"
+  "\n"
+  "\n"
+  "FUNCTION alpn(v(mV)) {\n"
+  "  alpn = exp(1.e-3*(-3)*(v-vhalfn)*9.648e4/(8.315*(273.16+celsius))) \n"
+  "}\n"
+  "\n"
+  "FUNCTION betn(v(mV)) {\n"
+  "  betn = exp(1.e-3*(-3)*(0.7)*(v-vhalfn)*9.648e4/(8.315*(273.16+celsius))) \n"
+  "}\n"
+  "\n"
+  "DERIVATIVE states {     : exact when v held constant; integrates over dt step\n"
+  "        rates(v)\n"
+  "        n' = (ninf - n)/taun\n"
+  "}\n"
+  "\n"
+  "PROCEDURE rates(v (mV)) { :callable from hoc\n"
+  "        LOCAL a\n"
+  "        a = alpn(v)\n"
+  "		if (v < -55 ) {              ::::::::::::::::::::   -55\n"
+  "		ninf = 0\n"
+  "		} else{\n"
+  "		ninf = 1 / ( 1 + exp( ( vhalfn - v ) / 11 ) )\n"
+  "		:ninf = 1 / ( 1 + exp( ( - v + 13 ) / 8.738 ) )\n"
+  "        }\n"
+  "		taun = betn(v)/(qt*(0.02)*(1+a))\n"
+  "	if (taun<nmax) {taun=nmax}\n"
+  "}\n"
+  "		\n"
+  ;
 #endif

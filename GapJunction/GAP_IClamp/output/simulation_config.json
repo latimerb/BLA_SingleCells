@@ -16,10 +16,8 @@
     "current_clamp": {
       "input_type": "current_clamp",
       "module": "IClamp",
-      "gids": [
-        0
-      ],
       "node_set": "all",
+      "gids": 0,
       "amp": [
         0.1
       ],

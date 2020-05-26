@@ -1,5 +1,5 @@
 begintemplate stylized_typeC
-
+/*
 public init, connect_sections, size_sections, append_sections, define_synapses
 public mechinit, insert_mechs, set_biophys, get_root
 public  pre_list, connect_pre, is_art, is_connected, gid, randi
@@ -13,11 +13,13 @@ public SynRecord
 strdef myroot, myname
 
 // objects
-objref syn, pre_list, templist, rootlist, myrootsec, this, rr, rotation
+objref syn, pre_list, templist, rootlist, myrootsec, this, rr, rotation, vec
 
 // external variables
-//external numCellTypes, cellType, VClampVector
+external numCellTypes, cellType, VClampVector
+*/
 
+public soma, dend, apic, axon, hill
 create soma[1]
 create dend[1]
 create apic[1]
@@ -34,16 +36,16 @@ proc init(){
 	size_sections()		// local fcn: set the size dimensions of each section
 	define_shape()		// builtin fcn: fill in 3d info for sections defined by only L and diam, translate 3d points for consistency with their connections 
   	append_sections()	// local fcn: append all sections to the section list
-	set_nseg()			// local fcn: set the number of segments in each section
+	//set_nseg()			// local fcn: set the number of segments in each section
 	//get_root()			// local fcn: perform morphology checks
 
 	// electrophysiology
 	mechinit()			// local fcn: set values for max conductances and reversal potentials of ion channels and other ephys parameters that are subject to fitting
 	insert_mechs()		// local fcn: insert ion channels and actually set values determined in the mechinit fcn
-	set_chanparams()	// local fcn: after all channels have been inserted, then their other parameters can be set	
+	//set_chanparams()	// local fcn: after all channels have been inserted, then their other parameters can be set	
 
 	// synapses
-	pre_list = new List() // define a list for the presynaptic connections	
+	//pre_list = new List() // define a list for the presynaptic connections	
 	//define_synapses($3)	// local fcn: define all possible synaptic connections received by this cell
 }
 
@@ -58,9 +60,9 @@ proc connect_sections() { local i
 
 proc size_sections() {local thetaz
 	//Rotation about z axis
-	objref rotation
+	//objref rotation
 	//rotation = new Random($1)
-	thetaz = 0//rotation.uniform(0,2*PI)
+	//thetaz = rotation.uniform(0,2*PI)
 	//print "thetaz: ", thetaz
 	//print "pyramidal soma points: ",12.5*sin(thetaz),12.5*cos(thetaz),25*sin(thetaz),25*cos(thetaz)
 		soma[0] {pt3dclear()
@@ -140,11 +142,12 @@ proc append_sections() { local i
 	axon[9] axon_list.append() //Only append AIS segment to receive synapses
 }
 
-
+/*
 external lambda_f
 proc set_nseg() {
   	forsec all { nseg = int((L/(0.1*lambda_f(100))+.9)/2)*2 + 1  }
 }
+*/
 
 proc mechinit() {
 
@@ -160,9 +163,9 @@ proc mechinit() {
 		Rm = 30000
 		gleak = 1/Rm
 		Ena = 60
-		gna12_soma = 0//80
-		gna12_dend = 0//80 
-		gna12_ais_max = 0//3200   // Nav1.2 
+		gna12_soma = 80
+		gna12_dend = 80 
+		gna12_ais_max = 3200   // Nav1.2 
 		gna16_ais_max = 3200   // Nav1.6
 		gna16_nakeaxon= 300    
 		gna12_myelin=20       // Nav1.2 at myelins
@@ -193,7 +196,10 @@ proc mechinit() {
 		gca_soma = gca
 }
 
-proc insert_mechs(){		
+proc insert_mechs(){
+		//objref vec
+		//vec = new Vector()	
+		//vec.where(VClampVector,"==",$1)
 		forall {
 			insert na gbar_na=0
 			insert na12  gbar_na12=0
@@ -220,32 +226,40 @@ proc insert_mechs(){
 		
 		dend[0]{
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
-			gbar_na = gna12_dend    // 80
-			gbar_kv = gkv_dend        // 20                            
-			gbar_km  = gkm            // 0.3                           
-			gbar_kca = gkca           // 0.3                           
-			gbar_ca = gca             // 0.3                           
-			insert cad                // Internal calcium concentration mechanism only at somatodendritic region.
+			//if (vec.size==0 || $1==VClampVector.x[0]){
+			  gbar_na = gna12_dend    // 80
+			  gbar_kv = gkv_dend        // 20                            
+			  gbar_km  = gkm            // 0.3                           
+			  gbar_kca = gkca           // 0.3                           
+			  gbar_ca = gca             // 0.3                           
+			  insert cad                // Internal calcium concentration mechanism only at somatodendritic region.
+			//}
 		}
+
 
 		apic[0]{
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
-			gbar_na = gna12_dend    // 80
-			gbar_kv = gkv_dend        // 20                            
-			gbar_km  = gkm            // 0.3                           
-			gbar_kca = gkca           // 0.3                           
-			gbar_ca = gca             // 0.3                           
-			insert cad                // Internal calcium concentration mechanism only at somatodendritic region.
+			//if (vec.size==0 || $1==VClampVector.x[0]){
+			  gbar_na = gna12_dend    // 80
+			  gbar_kv = gkv_dend        // 20                            
+			  gbar_km  = gkm            // 0.3                           
+			  gbar_kca = gkca           // 0.3                           
+			  gbar_ca = gca             // 0.3                           
+			  insert cad                // Internal calcium concentration mechanism only at somatodendritic region.
+			//}
 		}
 
 		soma[0]{	
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
-			gbar_na=gna12_soma          // 80
-			gbar_kv = gkv_soma            // 20 
-			gbar_km = gkm_soma            // 0.3
-			gbar_kca = gkca_soma          // 0.3
-			gbar_ca = gca_soma            // 0.3
+			//if (vec.size==0 || $1==VClampVector.x[0]){
+			  gbar_na=gna12_soma          // 80
+			  gbar_kv = gkv_soma            // 20 
+			  gbar_km = gkm_soma            // 0.3
+			  gbar_kca = gkca_soma          // 0.3
+			  gbar_ca = gca_soma            // 0.3
+			//}
 		}
+
 		
 		hill[0]{
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
@@ -254,12 +268,16 @@ proc insert_mechs(){
 
 		for i=0,9 axon[i] {
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
-			gbar_cav31 = 0.008
+			//if (vec.size==0 || $1==VClampVector.x[0]){
+			  gbar_cav31 = 0.008
+			//}
 		}
 
 		axon[10]{
 			insert pas e_pas = Vrest  g_pas = gleak Ra=RaDend cm = Cm
 		}
+		
+		//if (vec.size==0 || $1==VClampVector.x[0]){
 		hill[0].gbar_na12 = gna12_ais_max*	1	*	0.8
 		axon[0].gbar_na12 = gna12_ais_max*0.96*1
 		axon[1].gbar_na12 = gna12_ais_max*0.9*1                      
@@ -298,15 +316,16 @@ proc insert_mechs(){
 		axon[8].gbar_kv = gkv_axon	*	1
 		axon[9].gbar_kv = gkv_axon	*	1
 		axon[10].gbar_kv = gkv_axon	*	1
+		//}
 }	
-	
+	/*
 proc set_chanparams() {
 	forsec all {
 		
 	}
 }
 
-/*
+
 proc connect_pre() {  // $o1 target point process, $o2 returned NetCon
 	axon[10] $o2 = new NetCon (&v(0.5), $o1)
 			$o2.threshold = -10
@@ -404,5 +423,6 @@ proc define_synapses() {
 		findme = 1
 	}
 }
-	*/
+	
+*/
 endtemplate stylized_typeC

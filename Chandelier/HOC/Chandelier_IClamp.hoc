@@ -112,6 +112,52 @@ proc PopMatrix(){localobj mat, bm
 	
 }
 
+objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
+proc ConnectNetStim(){ local i
+objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
+
+// Make netstim to provide spikes
+	for i=0,10{
+		stim[i] = new NetStim()
+		stim[i].interval = 6 //(ms)
+		stim[i].number = 1
+		stim[i].start = 1000+150*i //(ms)
+		stim[i].noise = 0
+		
+		$o1.soma[0] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
+		Chn2PyrSyn[i].tau1 = 0.132
+		Chn2PyrSyn[i].tau2 = 6.27
+		Chn2PyrSyn[i].e = -50
+
+		Chn2PyrNC[i] = new NetCon(stim[i], Chn2PyrSyn[i])
+		Chn2PyrNC[i].delay = 0
+		Chn2PyrNC[i].weight = .011 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+	}
+	/*
+	access CellA.soma
+	vclamp[0] = new SEClamp(0.5)
+	vclamp[0].rs = .01 // Mohm:series resistance should be much smaller than input resistance of the cell
+	vclamp[0].dur1 = 0
+	vclamp[0].amp1 = 0
+	vclamp[0].dur2 = tstop
+	vclamp[0].amp2 = 0
+	vclamp[0].dur3 = 0
+	vclamp[0].amp3 = 0
+	
+	for i=9,9{
+		access CellA.axon[i]
+		vclamp[i] = new SEClamp(0.5)
+		vclamp[i].rs = .1 // Mohm:series resistance should be much smaller than input resistance of the cell
+		vclamp[i].dur1 = 0
+		vclamp[i].amp1 = 0
+		vclamp[i].dur2 = tstop
+		vclamp[i].amp2 = 0
+		vclamp[i].dur3 = 0
+		vclamp[i].amp3 = 0
+	}
+	*/
+}
+
 proc AssignCondandRun(){localobj cell,mat,tgt,vec1,vec2
 	// Here we read conductances from the matrix and assign them to the cell
 	cell = $o1
@@ -162,36 +208,125 @@ proc ConnectNetStimtoAISsegs(){ local i
 objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 
 // Make netstim to provide spikes
-	for i=0,0{
-		stim[i] = new NetStim()
-		stim[i].interval = 4 //(ms)
-		stim[i].number = 1
-		stim[i].start = 100+150*i //(ms)
-		stim[i].noise = 0
-		
-		$o1.soma[0] Chn2PyrSyn[i]= new MyExp2Sid(0.5)
-		Chn2PyrSyn[i].tau1 = 0.88
-		Chn2PyrSyn[i].tau2 = 2.3
-		Chn2PyrSyn[i].e = 0
-
-		Chn2PyrNC[i] = new NetCon(stim[i], Chn2PyrSyn[i])
-		Chn2PyrNC[i].delay = 0
-		Chn2PyrNC[i].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
-	}
-	/*
-	access CellA.soma
-	vclamp[0] = new SEClamp(0.5)
-	vclamp[0].rs = .01 // Mohm:series resistance should be much smaller than input resistance of the cell
-	vclamp[0].dur1 = 0
-	vclamp[0].amp1 = 0
-	vclamp[0].dur2 = tstop
-	vclamp[0].amp2 = 0
-	vclamp[0].dur3 = 0
-	vclamp[0].amp3 = 0
 	
+	stim[0] = new NetStim()
+	stim[0].interval = 4 //(ms)
+	stim[0].number = 8
+	stim[0].start = 100 //(ms)
+	stim[0].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[0]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[0].tau1 = 0.88
+	Chn2PyrSyn[0].tau2 = 2.3
+	Chn2PyrSyn[0].e = 0
+
+	Chn2PyrNC[0] = new NetCon(stim[0], Chn2PyrSyn[0])
+	Chn2PyrNC[0].delay = 0
+	Chn2PyrNC[0].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+/////////////////////
+	stim[1] = new NetStim()
+	stim[1].interval = 4 //(ms)
+	stim[1].number = 7
+	stim[1].start = 104 //(ms)
+	stim[1].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[1]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[1].tau1 = 0.88
+	Chn2PyrSyn[1].tau2 = 2.3
+	Chn2PyrSyn[1].e = 0
+
+	Chn2PyrNC[1] = new NetCon(stim[1], Chn2PyrSyn[1])
+	Chn2PyrNC[1].delay = 0
+	Chn2PyrNC[1].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+/////////////
+	stim[2] = new NetStim()
+	stim[2].interval = 4 //(ms)
+	stim[2].number = 4
+	stim[2].start = 108 //(ms)
+	stim[2].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[2]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[2].tau1 = 0.88
+	Chn2PyrSyn[2].tau2 = 2.3
+	Chn2PyrSyn[2].e = 0
+
+	Chn2PyrNC[2] = new NetCon(stim[2], Chn2PyrSyn[2])
+	Chn2PyrNC[2].delay = 0
+	Chn2PyrNC[2].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.
+//////////////
+	stim[3] = new NetStim()
+	stim[3].interval = 4 //(ms)
+	stim[3].number = 1
+	stim[3].start = 116 //(ms)
+	stim[3].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[3]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[3].tau1 = 0.88
+	Chn2PyrSyn[3].tau2 = 2.3
+	Chn2PyrSyn[3].e = 0
+
+	Chn2PyrNC[3] = new NetCon(stim[3], Chn2PyrSyn[3])
+	Chn2PyrNC[3].delay = 0
+	Chn2PyrNC[3].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.	
+//////////////
+	stim[4] = new NetStim()
+	stim[4].interval = 4 //(ms)
+	stim[4].number = 2
+	stim[4].start = 116 //(ms)
+	stim[4].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[4]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[4].tau1 = 0.88
+	Chn2PyrSyn[4].tau2 = 2.3
+	Chn2PyrSyn[4].e = 0
+
+	Chn2PyrNC[4] = new NetCon(stim[4], Chn2PyrSyn[4])
+	Chn2PyrNC[4].delay = 0
+	Chn2PyrNC[4].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.	
+////////////////
+	stim[5] = new NetStim()
+	stim[5].interval = 4 //(ms)
+	stim[5].number = 1
+	stim[5].start = 112 //(ms)
+	stim[5].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[5]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[5].tau1 = 0.88
+	Chn2PyrSyn[5].tau2 = 2.3
+	Chn2PyrSyn[5].e = 0
+
+	Chn2PyrNC[5] = new NetCon(stim[5], Chn2PyrSyn[5])
+	Chn2PyrNC[5].delay = 0
+	Chn2PyrNC[5].weight = .009 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.	
+////////////////
+	stim[6] = new NetStim()
+	stim[6].interval = 4 //(ms)
+	stim[6].number = 1
+	stim[6].start = 124 //(ms)
+	stim[6].noise = 0
+		
+	$o1.soma[0] Chn2PyrSyn[6]= new MyExp2Sid(0.5)
+	Chn2PyrSyn[6].tau1 = 0.88
+	Chn2PyrSyn[6].tau2 = 2.3
+	Chn2PyrSyn[6].e = 0
+
+	Chn2PyrNC[6] = new NetCon(stim[6], Chn2PyrSyn[6])
+	Chn2PyrNC[6].delay = 0
+	Chn2PyrNC[6].weight = .01 //With MyExp2Sid, NC weight of 1 is a peak conductance of 1.	
+////////////////
+	access $o1.soma
+	vclamp[0] = new SEClamp(0.5)
+	vclamp[0].rs = .1 // Mohm:series resistance should be much smaller than input resistance of the cell
+	vclamp[0].dur1 = 0
+	vclamp[0].amp1 = -70
+	vclamp[0].dur2 = tstop
+	vclamp[0].amp2 = -70
+	vclamp[0].dur3 = 0
+	vclamp[0].amp3 = -70
+	/*
 	for i=9,9{
 		access CellA.axon[i]
-		vclamp[i] = new SEClamp(0.5)
+		vclamp[i] = new\ SEClamp(0.5)
 		vclamp[i].rs = .1 // Mohm:series resistance should be much smaller than input resistance of the cell
 		vclamp[i].dur1 = 0
 		vclamp[i].amp1 = 0
@@ -207,7 +342,7 @@ objref Chn2PyrSyn[11], Chn2PyrNC[11], stim[11], vclamp[12]
 /////////////////////////////////////////////////////////////////////////////
 
 
-tstop = 200
+tstop = 2000
 v_init = -70
 V_rest = -70
 
@@ -218,6 +353,8 @@ print "-----Stylized-----\n"
 print "Input resistance: ", rn(Cell1), "Megaohms"
 totalarea()
 
+objref vclamp
+vclamp = new SEClamp()
 /*
 objref Cell2
 Cell2 = new Henckens_PyrAMC1A()
@@ -232,3 +369,5 @@ totalarea()
 ConnectNetStimtoAISsegs(Cell1)
 //ConnectNetStimtoAISsegs(Cell2)
 
+
+xopen("plot.ses")

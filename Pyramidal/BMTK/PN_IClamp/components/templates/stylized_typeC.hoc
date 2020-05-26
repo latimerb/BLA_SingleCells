@@ -142,9 +142,9 @@ proc append_sections() { local i
 	axon[10] all.append()
 	axon[11] all.append()
 
-	for i=0,11{	
-		axon[i] axonal.append()
-	}
+	
+	axon[8] axonal.append()
+	
 	print "appended sections"
 
 }

@@ -20,6 +20,11 @@
         "nodes_file": "$NETWORK_DIR/mcortex_nodes.h5"
       }
     ],
-    "edges": []
+    "edges": [
+      {
+        "edge_types_file": "$NETWORK_DIR/mcortex_mcortex_edge_types.csv",
+        "edges_file": "$NETWORK_DIR/mcortex_mcortex_edges.h5"
+      }
+    ]
   }
 }

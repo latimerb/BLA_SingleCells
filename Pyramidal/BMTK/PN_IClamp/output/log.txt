@@ -1,11 +1,9 @@
-2019-11-22 14:21:36,064 [INFO] Created log file
-2019-11-22 14:21:36,312 [INFO] Building cells.
-2019-11-22 14:21:36,419 [INFO] Building recurrent connections
-2019-11-22 14:21:36,443 [INFO] Running simulation for 2000.000 ms with the time step 0.100 ms
-2019-11-22 14:21:36,443 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
-2019-11-22 14:21:36,443 [INFO] Block save every 5000 steps
-2019-11-22 14:21:46,485 [INFO]     step:5000 t_sim:500.00 ms
-2019-11-22 14:21:56,510 [INFO]     step:10000 t_sim:1000.00 ms
-2019-11-22 14:22:06,498 [INFO]     step:15000 t_sim:1500.00 ms
-2019-11-22 14:22:16,766 [INFO]     step:20000 t_sim:2000.00 ms
-2019-11-22 14:22:17,188 [INFO] Simulation completed in 40.75 seconds 
+2020-05-26 16:57:22,094 [INFO] Created log file
+2020-05-26 16:57:22,553 [INFO] Building cells.
+2020-05-26 16:57:22,585 [INFO] Building recurrent connections
+2020-05-26 16:57:22,607 [INFO] Running simulation for 1000.000 ms with the time step 0.100 ms
+2020-05-26 16:57:22,607 [INFO] Starting timestep: 0 at t_sim: 0.000 ms
+2020-05-26 16:57:22,607 [INFO] Block save every 5000 steps
+2020-05-26 16:57:23,670 [INFO]     step:5000 t_sim:500.00 ms
+2020-05-26 16:57:24,823 [INFO]     step:10000 t_sim:1000.00 ms
+2020-05-26 16:57:24,830 [INFO] Simulation completed in 2.223 seconds 

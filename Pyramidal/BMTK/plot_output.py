@@ -14,7 +14,7 @@ config_file = "simulation_config.json"
 #lfp_file = "./output/ecp.h5"
 mem_pot_file = './PN_IClamp/output/v_report.h5'
 raster_file = './PN_IClamp/output/spikes.h5'
-
+dt=0.1
 
 # load 
 i = h5py.File(mem_pot_file,'r')
@@ -22,10 +22,9 @@ r = h5py.File(raster_file,'r')
 
 
 mem_potential = i['report']['mcortex']['data']
+time = np.arange(0,dt*mem_potential.shape[0],dt)
 
-pdb.set_trace()
-
-plt.plot(mem_potential)
+plt.plot(time,mem_potential)
 
 
 
