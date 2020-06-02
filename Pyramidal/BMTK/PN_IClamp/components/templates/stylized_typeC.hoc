@@ -45,7 +45,7 @@ proc init(){
   	append_sections()	// local fcn: append all sections to the section list
 	set_nseg()			// local fcn: set the number of segments in each section
 	//get_root()			// local fcn: perform morphology checks
-	add_noise()
+	//add_noise()
 
 	// electrophysiology
 	mechinit()			// local fcn: set values for max conductances and reversal potentials of ion channels and other ephys parameters that are subject to fitting

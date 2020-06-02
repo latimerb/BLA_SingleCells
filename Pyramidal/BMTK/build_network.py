@@ -43,7 +43,7 @@ build_env_bionet(base_dir='PN_IClamp',      # Where to save the scripts and conf
                  tstop=10000.0, dt=0.1,     # Run a simulation for 2000 ms at 0.1 ms intervals
                  report_vars=['v'], # Tells simulator we want to record membrane potential and calcium traces
                  current_clamp={           # Creates a step current from 500.ms to 1500.0 ms  
-                     'amp': [0.0,0.0000029],
+                     'amp': [0.0,0.029],
                      'delay': [200,800],
                      'duration': [1000,19200],
                      'gids':[0,1]
