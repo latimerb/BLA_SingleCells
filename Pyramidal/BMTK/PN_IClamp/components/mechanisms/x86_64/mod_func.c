@@ -12,6 +12,8 @@ extern void _ca_reg(void);
 extern void _capool_reg(void);
 extern void _cav31_reg(void);
 extern void _gabaa_reg(void);
+extern void _Gfluct_new_exc_reg(void);
+extern void _Gfluct_new_inh_reg(void);
 extern void _h_reg(void);
 extern void _Ih_reg(void);
 extern void _im_reg(void);
@@ -58,6 +60,8 @@ void modl_reg(){
     fprintf(stderr," modfiles/capool.mod");
     fprintf(stderr," modfiles/cav31.mod");
     fprintf(stderr," modfiles/gabaa.mod");
+    fprintf(stderr," modfiles/Gfluct_new_exc.mod");
+    fprintf(stderr," modfiles/Gfluct_new_inh.mod");
     fprintf(stderr," modfiles/h.mod");
     fprintf(stderr," modfiles/Ih.mod");
     fprintf(stderr," modfiles/im.mod");
@@ -101,6 +105,8 @@ void modl_reg(){
   _capool_reg();
   _cav31_reg();
   _gabaa_reg();
+  _Gfluct_new_exc_reg();
+  _Gfluct_new_inh_reg();
   _h_reg();
   _Ih_reg();
   _im_reg();
