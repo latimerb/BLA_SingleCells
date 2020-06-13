@@ -4,7 +4,7 @@ net = NetworkBuilder('mcortex')
 net.add_nodes(cell_name='Scnn1a_473845048',
               potental='exc',
               model_type='biophysical',
-              model_template='hoc:chandelierWB',
+              model_template='hoc:chandelier',
               morphology=None
               )
 
