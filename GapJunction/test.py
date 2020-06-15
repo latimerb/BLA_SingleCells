@@ -28,54 +28,68 @@ parser.add_argument('--plot', action='store_true', help="Plot the data instead o
 parser.add_argument('--output_dir', type=str, default=os.getcwd(),
                     help="The directory to save the output files into")
 args = parser.parse_args()
+
 # Get the parallel context and related parameters
 pc = h.ParallelContext()
 num_processes = int(pc.nhost())
 mpi_rank = int(pc.id())
 print("Creating test network...")
+
 # The first section is created on the first node and the second section on the last node 
 # (NB: which will obviously be the same if there is only one node)
 #if mpi_rank == 0:
 print("Creating pre section on process {}".format(mpi_rank))
+
 # Create the first section
 section1 = h.Section()
 section1.insert('hh')
+
 # Set up the voltage of the first section to be able to connect to the gap junction
 # on the second section
 pc.source_var(section1(0.5)._ref_v, 0,sec=section1)
+
 # Insert gap junction
 gap_junction1 = h.Gap(0.5, sec=section1)
 gap_junction1.g = 100.0
+
 # Set up the gap junction on the first section to connect with the second section
 # voltage
 pc.target_var(gap_junction1._ref_vgap, 1)
+
 # Stimulate the first section to make it obvious whether gap junction is working
 stim = h.IClamp(section1(0.5))
 stim.delay = 50
 stim.amp = 10
 stim.dur = 100
+
 # Record Voltage of first section
 v1 = h.Vector()
 v1.record(section1(0.5)._ref_v)
 #if mpi_rank == (num_processes - 1):
 print("Creating post section on process {}".format(mpi_rank))
+
 # Create the second section
 section2 = h.Section()
 section2.insert('hh')
 # Set up the voltage of the second section to be able to connect to the gap junction
 # on the first section
 pc.source_var(section2(0.5)._ref_v, 1,sec=section2)
+
 # Insert gap junction
 gap_junction2 = h.Gap(0.5, sec=section2)
 gap_junction2.g = 100.0
+
 # Set up the gap junction on the second section to connect with the first section
 # voltage
 pc.target_var(gap_junction2._ref_vgap, 0)
+
 # Record Voltage of second section
 v2 = h.Vector()
 v2.record(section2(0.5)._ref_v)
+
 # Finalise construction of parallel context
 pc.setup_transfer()
+
 # Record time
 rec_t = h.Vector()
 rec_t.record(h._ref_t)
@@ -86,11 +100,11 @@ h.dt = 0.25
 print("Setting maxstep on process {}".format(mpi_rank))
 pc.set_maxstep(10)
 print("Finitialise on process {}".format(mpi_rank))
-#h.finitialize(-60)
+h.finitialize(-60)
 print("Running simulation on process {}".format(mpi_rank))
 #
 h.tstop = 100
-#pc.psolve(100)
+pc.psolve(100)
 h.run(h.tstop)
 print("Finished run on process {}".format(mpi_rank))
 
