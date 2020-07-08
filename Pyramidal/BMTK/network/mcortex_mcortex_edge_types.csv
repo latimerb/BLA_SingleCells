@@ -1,2 +1,0 @@
-edge_type_id target_query source_query syn_weight target_sections delay weight_function model_template distance_range dynamics_params
-100 cell_name=='PN' cell_name=='Chn' 0.009 ['axonal'] 0.0 NULL Exp2Syn "[0.0, 300.0]" GABA_InhToExc.json
