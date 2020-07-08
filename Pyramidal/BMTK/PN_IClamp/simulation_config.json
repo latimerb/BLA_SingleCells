@@ -6,7 +6,7 @@
   "target_simulator": "NEURON",
   "run": {
     "tstart": 0.0,
-    "tstop": 10000.0,
+    "tstop": 1000.0,
     "dt": 0.1,
     "dL": 20.0,
     "spike_threshold": -15.0,
@@ -21,22 +21,10 @@
       "input_type": "current_clamp",
       "module": "IClamp",
       "node_set": "all",
-      "gids": [
-        0,
-        1
-      ],
-      "amp": [
-        0.0,
-        0.029
-      ],
-      "delay": [
-        200,
-        800
-      ],
-      "duration": [
-        1000,
-        19200
-      ]
+      "gids": "all",
+      "amp": 0.02,
+      "delay": 200,
+      "duration": 1000
     }
   },
   "output": {

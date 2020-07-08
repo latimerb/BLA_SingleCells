@@ -1,3 +1,2 @@
-node_type_id morphology model_template potental cell_name model_type
-100  hoc:stylized_typeC exc PN biophysical
-101  hoc:chandelierWB exc Chn biophysical
+node_type_id model_template cell_name potental morphology model_type
+100 hoc:stylized_typeC PN exc  biophysical
