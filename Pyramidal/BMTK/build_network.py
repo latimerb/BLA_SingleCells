@@ -22,12 +22,12 @@ from bmtk.utils.sim_setup import build_env_bionet
 build_env_bionet(base_dir='PN_IClamp',      # Where to save the scripts and config files 
                  components_dir='components',
                  network_dir='network',    # Location of directory containing network files
-                 tstop=1200.0, dt=0.1,     # Run a simulation for 2000 ms at 0.1 ms intervals
+                 tstop=2000.0, dt=0.1,     # Run a simulation for 2000 ms at 0.1 ms intervals
                  report_vars=['v'], # Tells simulator we want to record membrane potential and calcium traces
                  current_clamp={           # Creates a step current from 500.ms to 1500.0 ms  
-                     'amp': 0.24,
-                     'delay': 200,
-                     'duration': 800,
+                     'amp': 0.8,
+                     'delay': 500,
+                     'duration': 1000,
                  },
                  compile_mechanisms=True   # Will try to compile NEURON mechanisms
                 )

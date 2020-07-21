@@ -20,6 +20,7 @@
         "nodes_file": "$NETWORK_DIR/mcortex_nodes.h5"
       }
     ],
-    "edges": []
+    "edges": [],
+    "gap_juncs": []
   }
 }

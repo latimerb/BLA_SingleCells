@@ -2,7 +2,7 @@
   "target_simulator": "NEURON",
   "run": {
     "tstart": 0.0,
-    "tstop": 1200.0,
+    "tstop": 2000.0,
     "dt": 0.1,
     "dL": 20.0,
     "spike_threshold": -15.0,
@@ -18,9 +18,9 @@
       "module": "IClamp",
       "node_set": "all",
       "gids": "all",
-      "amp": 0.24,
-      "delay": 200,
-      "duration": 800
+      "amp": 0.8,
+      "delay": 500,
+      "duration": 1000
     }
   },
   "output": {
@@ -56,7 +56,8 @@
         "nodes_file": "/home/mizzou/BLA_SingleCells/Pyramidal/BMTK/network/mcortex_nodes.h5"
       }
     ],
-    "edges": []
+    "edges": [],
+    "gap_juncs": []
   },
   "node_sets": {
     "biophysical_nodes": {
